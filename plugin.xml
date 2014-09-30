@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+        id="org.jboss.aerogear.cordova.oauth2"
+        version="0.0.1">
+
+  <name>OAuth2</name>
+
+  <engines>
+    <engine name="cordova" version=">=3.4.0"/>
+  </engines>
+
+  <asset src="www/oauth2.js" target="js/oauth2.js"/>
+
+  <js-module src="www/oauth2.js" name="oauth2">
+    <clobbers target="oauth2" />
+  </js-module>
+
+  <platform name="ios">
+    <source-file src="src/ios/AccountManager.swift"/>
+    <header-file src="src/ios/AeroGearOAuth2.h"/>
+    <source-file src="src/ios/AuthzModule.swift"/>
+    <source-file src="src/ios/Config.swift"/>
+    <source-file src="src/ios/FacebookOAuth2Module.swift"/>
+    <source-file src="src/ios/Http.swift"/>
+    <source-file src="src/ios/HttpMethod.swift"/>
+    <source-file src="src/ios/JsonRequestSerializer.swift"/>
+    <source-file src="src/ios/JsonResponseSerializer.swift"/>
+    <source-file src="src/ios/KeycloakOAuth2Module.swift"/>
+    <source-file src="src/ios/MultiPartData.swift"/>
+    <source-file src="src/ios/OAuth2Module.swift"/>
+    <source-file src="src/ios/OAuth2Session.swift"/>
+    <source-file src="src/ios/RequestSerializer.swift"/>
+    <source-file src="src/ios/ResponseSerializer.swift"/>
+    <source-file src="src/ios/StringResponseSerializer.swift"/>
+    <source-file src="src/ios/TrustedPersistantOAuth2Session.swift"/>
+    <source-file src="src/ios/UntrustedMemoryOAuth2Session.swift"/>
+  </platform>
+</plugin>
