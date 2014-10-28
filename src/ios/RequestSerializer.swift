@@ -17,13 +17,43 @@
 
 import Foundation
 
+/**
+The protocol that request serializers must adhere to
+*/
 public protocol RequestSerializer {
     
-    var url: NSURL {get set}
-    var headers: [String: String]? {get set}
-    var stringEncoding: NSNumber {get}
-    var cachePolicy: NSURLRequestCachePolicy {get}
-    var timeoutInterval: NSTimeInterval {get set}
+    /// The url that this request serializer is bound to
+    var url: NSURL? { get set }
+    // Any headers that will be appended on the request
+    var headers: [String: String]? { get set }
+    /// The String encoding to be used
+    var stringEncoding: NSNumber { get }
+    ///  The cache policy
+    var cachePolicy: NSURLRequestCachePolicy { get }
+    /// The timeout interval
+    var timeoutInterval: NSTimeInterval { get set }
     
-    func request(url: NSURL, method: HttpMethod, parameters: [String: AnyObject]?, headers: [String: String]?) -> NSURLRequest?
+    /**
+    Build an request using the specified params passed in
+    
+    :param: url               the url of the resource
+    :param: method        the method to be used,
+    :param: parameters   the request parameters
+    :param: headers        any headers to be used on this request
+    
+    :returns: the URLRequest object
+    */
+    func request(url: NSURL, method: HttpMethod, parameters: [String: AnyObject]?, headers: [String: String]?) -> NSURLRequest
+    
+    /**
+    Build an multipart request using the specified params passed in
+    
+    :param: url               the url of the resource
+    :param: method       the method to be used,
+    :param: parameters  the request parameters
+    :param: headers        any headers to be used on this request
+    
+    :returns: the URLRequest object
+   */
+    func multipartRequest(url: NSURL, method: HttpMethod, parameters: [String: AnyObject]?, headers: [String: String]?) -> NSURLRequest
 }

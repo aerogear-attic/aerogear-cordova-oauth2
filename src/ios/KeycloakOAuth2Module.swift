@@ -17,6 +17,9 @@
 
 import Foundation
 
+/**
+An OAuth2Module subclass specific to 'Keycloak' authorization
+*/
 public class KeycloakOAuth2Module: OAuth2Module {
        
     public override func revokeAccess(completionHandler: (AnyObject?, NSError?) -> Void) {
@@ -25,9 +28,7 @@ public class KeycloakOAuth2Module: OAuth2Module {
             return;
         }
         let paramDict:[String:String] = [ "client_id": config.clientId, "refresh_token": self.oauth2Session.refreshToken!]
-        
-        http.baseURL = config.revokeTokenEndpointURL!
-        http.POST(parameters: paramDict, completionHandler: { (response, error) in
+        http.POST(config.revokeTokenEndpoint!, parameters: paramDict, completionHandler: { (response, error) in
             if (error != nil) {
                 completionHandler(nil, error)
                 return
