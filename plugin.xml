@@ -15,7 +15,11 @@
 
   <platform name="ios">
     <info>
-      open xcode go into settings change `deployment target` to 7.0 or above and add `[Project Name]/Plugins/org.jboss.aerogear.cordova.oauth2/Bridging-Header.h` to Objective-c Bridging Header under the Swift Compiler - Code Generation options and set LD_RUNPATH_SEARCH_PATHS to "$(inherited) @executable_path/Frameworks"
+      open xcode go into settings change:
+      1. `deployment target` to 7.0 or above
+      2. add `[Project Name]/Plugins/org.jboss.aerogear.cordova.oauth2/Bridging-Header.h` to Objective-c Bridging Header
+          under the Swift Compiler - Code Generation options
+      3. set LD_RUNPATH_SEARCH_PATHS to "$(inherited) @executable_path/Frameworks"
     </info>
     <config-file target="config.xml" parent="/*">
       <feature name="OAuth2Plugin">
