@@ -22,6 +22,16 @@
         <param name="ios-package" value="OAuth2Plugin" />
       </feature>
     </config-file>
+    <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+      <array>
+        <dict>
+          <key>CFBundleURLSchemes</key>
+          <array>
+            <string>$PACKAGE_NAME</string>
+          </array>
+        </dict>
+      </array>
+    </config-file>
     <source-file src="src/ios/AeroGearHttp.h" />
     <source-file src="src/ios/AccountManager.swift" />
     <source-file src="src/ios/AuthzModule.swift" />
