@@ -96,5 +96,7 @@
 
     <source-file src="src/ios/Bridging-Header.h" />
     <source-file src="src/ios/OAuth2Plugin.swift" />
+    <source-file src="src/ios/AppDelegate+url.m" />
+    <source-file src="src/ios/AppDelegate+url.h" />
   </platform>
 </plugin>
