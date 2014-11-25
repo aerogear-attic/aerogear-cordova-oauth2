@@ -21,7 +21,7 @@ OAuth2.prototype.add = function (settings) {
   cordova.exec(null, null, 'OAuth2Plugin', 'add', [settings]);
 };
 
-OAuth2.prototype.requestAccess = function () {
+OAuth2.prototype.requestAccess = function (accountId) {
   var success, error;
 
   return new Promise(function (resolve, reject) {
@@ -33,7 +33,7 @@ OAuth2.prototype.requestAccess = function () {
       resolve(result);
     };
 
-    cordova.exec(success, error, 'OAuth2Plugin', 'requestAccess', []);
+    cordova.exec(success, error, 'OAuth2Plugin', 'requestAccess', [accountId]);
   });
 }
 

@@ -1,12 +1,10 @@
 import Foundation
 
  @objc(OAuth2Plugin) class OAuth2Plugin : CDVPlugin {
-    var accountId: String?
     
     func add(command: CDVInvokedUrlCommand) {
         let args = command.arguments[0] as [String: String]
         
-        self.accountId = args["accountId"]
         var scopes: [String] = []
         if args["scopes"] != nil {
             scopes = args["scopes"]!.componentsSeparatedByString(",")
@@ -22,20 +20,26 @@ import Foundation
             scopes: scopes,
             accountId: args["accountId"])
         
-        
+
         AccountManager.addAccount(config, moduleClass: OAuth2Module.self)
     }
     
     func requestAccess(command: CDVInvokedUrlCommand) {
-        let module = AccountManager.getAccountByName(self.accountId!)
-        module?.requestAccess({ (response, error ) in
-            var commandResult:CDVPluginResult
-            if (error != nil) {
-                commandResult = CDVPluginResult(status: CDVCommandStatus_OK)
-            } else {
-                commandResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAsString: error?.description)
+        let accountId = command.arguments[0] as String
+        let module = AccountManager.getAccountByName(accountId)
+
+        commandDelegate.runInBackground { () -> Void  in
+            if let module = module {
+                module.requestAccess({ (accessToken, error ) in
+                    var commandResult:CDVPluginResult
+                    if let error = error {
+                        commandResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAsString: error.description)
+                    } else {
+                        commandResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: accessToken as String)
+                    }
+                    self.commandDelegate.sendPluginResult(commandResult, callbackId: command.callbackId)
+                })
             }
-            self.commandDelegate.sendPluginResult(commandResult, callbackId: command.callbackId)
-        })
+        }
     }
 }
