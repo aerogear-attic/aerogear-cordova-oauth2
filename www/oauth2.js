@@ -29,6 +29,10 @@ var OAuth2 = function () {};
   @param {String} name - the name used to reference this particular authz module
   @param {Object} settings={} - the settings to be passed to the adapter
   @param {String} settings.clientId - the client id/ app Id of the protected service
+  @param {String} settings.base - base url for all endpoints e.g. "https://accounts.google.com"
+  @param {String} settings.accessTokenEndpoint - "o/oauth2/token"
+  @param {String} settings.refreshTokenEndpoint - "o/oauth2/token"
+  @param {String} settings.revokeTokenEndpoint - "rest/revoke"
   @param {String} settings.redirectURL - the URL to redirect to
   @param {String} settings.authEndpoint - the endpoint for authorization
   @param {String} [settings.validationEndpoint] - the optional endpoint to validate your token.  Not in the Spec, but recommend for use with Google's API's
@@ -46,11 +50,29 @@ var OAuth2 = function () {};
   });
  */
 OAuth2.prototype.add = function (object) {
-  this[object.name] = function() {
-    oauth2.requestAccess(object.name);
+  this[object.name] = {
+    requestAccess: function () {
+      return oauth2.requestAccess(object.name);
+    }
   }
   object.settings['accountId'] = object.name;
   cordova.exec(null, null, 'OAuth2Plugin', 'add', [object.settings]);
+};
+
+OAuth2.prototype.addGoogle = function (object) {
+  this.add({
+    name: object.name,
+    settings: {
+      base: "https://accounts.google.com",
+      authzEndpoint: "o/oauth2/auth",
+      redirectURL: "\(bundle):/oauth2Callback",
+      accessTokenEndpoint: "o/oauth2/token",
+      clientId: object.settings.clientId,
+      refreshTokenEndpoint: "o/oauth2/token",
+      revokeTokenEndpoint: "rest/revoke",
+      scopes: object.settings.scopes
+    }
+  });
 };
 
 /**

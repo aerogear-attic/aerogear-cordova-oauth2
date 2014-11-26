@@ -35,12 +35,11 @@ import java.util.Arrays;
  */
 public class OAuth2Plugin extends BasePlugin {
   private static final String TAG = OAuth2Plugin.class.getSimpleName();
-  private AuthzModule module;
 
   public boolean add(JSONObject data, CallbackContext callbackContext) throws JSONException, MalformedURLException {
     Log.d(TAG, "add account");
 
-    module = AuthorizationManager.config("name", OAuth2AuthorizationConfiguration.class)
+    AuthorizationManager.config(data.getString("accountId"), OAuth2AuthorizationConfiguration.class)
         .setBaseURL(new URL(data.getString("base")))
         .setAccountId(data.getString("accountId"))
         .setAccessTokenEndpoint(data.getString("accessTokenEndpoint"))
@@ -55,9 +54,10 @@ public class OAuth2Plugin extends BasePlugin {
     return true;
   }
 
-  public boolean requestAccess(final CallbackContext callbackContext) {
+  public boolean requestAccess(String name, final CallbackContext callbackContext) {
     Log.d(TAG, "requesting access");
 
+    final AuthzModule module = AuthorizationManager.getModule(name);
     module.requestAccess(cordova.getActivity(), new Callback<String>() {
       @Override
       public void onSuccess(String o) {
