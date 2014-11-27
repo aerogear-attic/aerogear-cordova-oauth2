@@ -39,19 +39,46 @@ public class OAuth2Plugin extends BasePlugin {
   public boolean add(JSONObject data, CallbackContext callbackContext) throws JSONException, MalformedURLException {
     Log.d(TAG, "add account");
 
-    AuthorizationManager.config(data.getString("accountId"), OAuth2AuthorizationConfiguration.class)
+    final OAuth2AuthorizationConfiguration configuration = AuthorizationManager.config(data.getString("accountId"), OAuth2AuthorizationConfiguration.class)
         .setBaseURL(new URL(data.getString("base")))
         .setAccountId(data.getString("accountId"))
         .setAccessTokenEndpoint(data.getString("accessTokenEndpoint"))
         .setAuthzEndpoint(data.getString("authzEndpoint"))
         .setClientId(data.getString("clientId"))
         .setRefreshEndpoint(data.getString("refreshTokenEndpoint"))
-        .setRedirectURL(data.getString("redirectURL"))
-        .setScopes(Arrays.asList(data.getString("scopes").split(",")))
-        .asModule();
+        .setRedirectURL(data.getString("redirectURL"));
 
+    if (data.has("scopes")) {
+      configuration.setScopes(Arrays.asList(data.getString("scopes").split(",")));
+    }
+
+    configuration.asModule();
     callbackContext.success();
     return true;
+  }
+
+  public boolean addGoogle(JSONObject data, CallbackContext callbackContext) throws JSONException, MalformedURLException {
+    Log.d(TAG, "add google account");
+
+    data.put("base", "https://accounts.google.com");
+    data.put("authzEndpoint", "o/oauth2/auth");
+    data.put("redirectURL", "http://localhost");
+    data.put("accessTokenEndpoint", "o/oauth2/token");
+    data.put("refreshTokenEndpoint", "o/oauth2/token");
+
+    return add(data, callbackContext);
+  }
+
+  public boolean addKeycloak(JSONObject data, CallbackContext callbackContext) throws JSONException, MalformedURLException {
+    Log.d(TAG, "add keycload account");
+
+    String realm = data.getString("realm");
+    data.put("authzEndpoint", String.format("realms/%s/tokens/login", realm));
+    data.put("accessTokenEndpoint", String.format("realms/%s/tokens/access/codes", realm));
+    data.put("redirectURL", "http://oauth2callback");
+    data.put("refreshTokenEndpoint", String.format("realms/%s/tokens/refresh", realm));
+
+    return add(data, callbackContext);
   }
 
   public boolean requestAccess(String name, final CallbackContext callbackContext) {

@@ -22,6 +22,15 @@ var exec = require("cordova/exec");
 */
 var OAuth2 = function () {};
 
+function enrich(that, object) {
+    that[object.name] = {
+    requestAccess: function () {
+      return oauth2.requestAccess(object.name);
+    }
+  }
+  object.settings['accountId'] = object.name;
+}
+
 /**
   The OAuth2 adapter is the default type used when creating a new authorization module.
   This constructor is instantiated when the "add()" method is called
@@ -50,29 +59,18 @@ var OAuth2 = function () {};
   });
  */
 OAuth2.prototype.add = function (object) {
-  this[object.name] = {
-    requestAccess: function () {
-      return oauth2.requestAccess(object.name);
-    }
-  }
-  object.settings['accountId'] = object.name;
+  enrich(this, object);
   cordova.exec(null, null, 'OAuth2Plugin', 'add', [object.settings]);
 };
 
 OAuth2.prototype.addGoogle = function (object) {
-  this.add({
-    name: object.name,
-    settings: {
-      base: "https://accounts.google.com",
-      authzEndpoint: "o/oauth2/auth",
-      redirectURL: "\(bundle):/oauth2Callback",
-      accessTokenEndpoint: "o/oauth2/token",
-      clientId: object.settings.clientId,
-      refreshTokenEndpoint: "o/oauth2/token",
-      revokeTokenEndpoint: "rest/revoke",
-      scopes: object.settings.scopes
-    }
-  });
+  enrich(this, object);
+  cordova.exec(null, null, 'OAuth2Plugin', 'addGoogle', [object.settings]);
+};
+
+OAuth2.prototype.addKeycloak = function (object) {
+  enrich(this, object);
+  cordova.exec(null, null, 'OAuth2Plugin', 'addKeycloak', [object.settings]);
 };
 
 /**

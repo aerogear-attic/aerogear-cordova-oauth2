@@ -24,6 +24,34 @@ import Foundation
         AccountManager.addAccount(config, moduleClass: OAuth2Module.self)
     }
     
+    func addGoogle(command: CDVInvokedUrlCommand) {
+        let args = command.arguments[0] as [String: String]
+        
+        var scopes: [String] = []
+        if args["scopes"] != nil {
+            scopes = args["scopes"]!.componentsSeparatedByString(",")
+        }
+        
+        let googleConfig = GoogleConfig(
+            clientId: args["clientId"]!,
+            scopes: scopes,
+            accountId: args["accountId"])
+        
+        AccountManager.addGoogleAccount(googleConfig)
+    }
+    
+    func addKeycloak(command: CDVInvokedUrlCommand) {
+        let args = command.arguments[0] as [String: String]
+        let keycloakConfig = KeycloakConfig(
+            clientId: args["clientId"]!,
+            host: args["base"]!.stringByReplacingOccurrencesOfString("/auth", withString: ""),
+            realm: args["realm"])
+        
+        keycloakConfig.accountId = args["accountId"]
+        
+        AccountManager.addKeycloakAccount(keycloakConfig)
+    }
+    
     func requestAccess(command: CDVInvokedUrlCommand) {
         let accountId = command.arguments[0] as String
         let module = AccountManager.getAccountByName(accountId)
