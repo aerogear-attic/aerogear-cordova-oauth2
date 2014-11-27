@@ -45,23 +45,30 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
 ```javascript
   onDeviceReady: function () {
     app.receivedEvent('deviceready');
-    oauth2.add({
-      base: "https://accounts.google.com",
-      authzEndpoint: "o/oauth2/auth",
-      redirectURL: "io.cordova.hellocordova:/oauth2callback",
-      accessTokenEndpoint: "o/oauth2/token",
-      clientId: "517285908032-nnkcrot1727fmd738pug6clbqlgosffs.apps.googleusercontent.com",
-      refreshTokenEndpoint: "o/oauth2/token",
-      revokeTokenEndpoint: "rest/revoke",
-      scopes: 'openid, email',
-      accountId: 'google'
+    oauth2.addGoogle({
+      name: 'gplus',
+      settings: {
+        clientId: "617285928032-nnkcrot1827fmd738pug6clbqlgosffs.apps.googleusercontent.com",
+        scopes: 'https://www.googleapis.com/auth/drive'
+      }
+    });
+    
+    oauth2.addKeycloak({
+      name: 'keycloak',
+      settings: {
+        base: 'http://192.168.1.15:8080/auth',
+        clientId: 'shoot-third-party',
+        realm: "shoot-realm"
+      }
     });
 
-    oauth2.requestAccess()
-      .then(function (result) {
-        console.log(result);
-      }, function (error) {
-        alert(error);
+    oauth2.gplus.requestAccess()
+      .then(function (token) {
+        console.log(token);
+        // add token to the http header on futher http requests:
+        // 'Authorization': 'Bearer ' + token
+      }, function (err) {
+        alert(err.error);
       });
   },
 ```
@@ -83,7 +90,5 @@ Our iOS version is using a Swift library. Cordova is not yet fully supporting Sw
 
 This is a very early version:
 - remove Swift hack on xcodeproject
-- have a GoogleConfig, KeycloakConfig available in JavaScript
-- handle oauth2 token in http headers
+- remove Android hack on gradle
 - expose refreshToken, revokeToken
-- android version
