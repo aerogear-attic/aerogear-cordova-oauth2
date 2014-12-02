@@ -110,7 +110,7 @@ OAuth2.prototype.addKeycloak = function (object) {
 };
 
 /**
-  Convenience function to add keycloak as a provider
+  Convenience function to add Facebook as a provider
   @status Experimental
   @param {String} name - the name used to reference this particular authz module
   @param {Object} settings={} - the settings to be passed to the adapter
@@ -119,14 +119,14 @@ OAuth2.prototype.addKeycloak = function (object) {
   @param {String} settings.scopes - comma separated list of "scopes" you want access to
   @returns {void}
   @example
-  oauth2.addKeycloak({
-      name: 'keycloak',
-      settings: {
-        base: 'http://192.168.1.15:8080/auth',
-        clientId: 'shoot-third-party',
-        realm: "shoot-realm"
-      }
-    });  
+  oauth2.addFacebook({
+    name: 'facebook',
+    settings: {
+      clientId: '1511044619160050',
+      clientSecret: '3b08052d3d96e2120f2c53a36eebd02f',
+      scopes: 'photo_upload, publish_actions'
+    }
+  });
 */
 OAuth2.prototype.addFacebook = function (object) {
   enrich(this, object);
