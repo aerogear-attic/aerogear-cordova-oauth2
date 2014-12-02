@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" id="org.jboss.aerogear.cordova.oauth2" version="0.0.1">
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" id="org.jboss.aerogear.cordova.oauth2" version="1.0.0">
 
   <name>OAuth2</name>
 
@@ -69,6 +69,14 @@
           <key>CFBundleURLSchemes</key>
           <array>
             <string>$PACKAGE_NAME</string>
+          </array>
+        </dict>
+        <dict>
+          <key>CFBundleURLName</key>
+          <string>fb$PACKAGE_NAME</string>
+          <key>CFBundleURLSchemes</key>
+          <array>
+            <string>fb$PACKAGE_NAME</string>
           </array>
         </dict>
       </array>

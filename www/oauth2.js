@@ -39,9 +39,9 @@ function enrich(that, object) {
   @param {Object} settings={} - the settings to be passed to the adapter
   @param {String} settings.clientId - the client id/ app Id of the protected service
   @param {String} settings.base - base url for all endpoints e.g. "https://accounts.google.com"
-  @param {String} settings.accessTokenEndpoint - "o/oauth2/token"
-  @param {String} settings.refreshTokenEndpoint - "o/oauth2/token"
-  @param {String} settings.revokeTokenEndpoint - "rest/revoke"
+  @param {String} settings.accessTokenEndpoint - url to get the token
+  @param {String} settings.refreshTokenEndpoint - url to refresh the token
+  @param {String} settings.revokeTokenEndpoint - url to revoke the token
   @param {String} settings.redirectURL - the URL to redirect to
   @param {String} settings.authEndpoint - the endpoint for authorization
   @param {String} [settings.validationEndpoint] - the optional endpoint to validate your token.  Not in the Spec, but recommend for use with Google's API's
@@ -63,14 +63,74 @@ OAuth2.prototype.add = function (object) {
   cordova.exec(null, null, 'OAuth2Plugin', 'add', [object.settings]);
 };
 
+/**
+  Convenience function to add google as a provider
+  @status Experimental
+  @param {String} name - the name used to reference this particular authz module
+  @param {Object} settings={} - the settings to be passed to the adapter
+  @param {String} settings.clientId - the client id/ app Id of the protected service
+  @param {String} settings.scopes - a space separated list of "scopes" or things you want to access
+  @returns {void}
+  @example
+  oauth2.addGoogle({
+      name: 'gplus',
+      settings: {
+        clientId: "617285928032-nnkcrot1827fmd738pug6clbqlgosffs.apps.googleusercontent.com",
+        scopes: 'https://www.googleapis.com/auth/drive'
+      }
+    });
+*/
 OAuth2.prototype.addGoogle = function (object) {
   enrich(this, object);
   cordova.exec(null, null, 'OAuth2Plugin', 'addGoogle', [object.settings]);
 };
 
+/**
+  Convenience function to add keycloak as a provider
+  @status Experimental
+  @param {String} name - the name used to reference this particular authz module
+  @param {Object} settings={} - the settings to be passed to the adapter
+  @param {String} settings.base - base url for all endpoints e.g. "https://keycloak:8080/auth"
+  @param {String} settings.clientId - the client id/ app Id of the protected service
+  @param {String} settings.realm - the keycloak realm 
+  @returns {void}
+  @example
+  oauth2.addKeycloak({
+      name: 'keycloak',
+      settings: {
+        base: 'http://192.168.1.15:8080/auth',
+        clientId: 'shoot-third-party',
+        realm: "shoot-realm"
+      }
+    });  
+*/
 OAuth2.prototype.addKeycloak = function (object) {
   enrich(this, object);
   cordova.exec(null, null, 'OAuth2Plugin', 'addKeycloak', [object.settings]);
+};
+
+/**
+  Convenience function to add keycloak as a provider
+  @status Experimental
+  @param {String} name - the name used to reference this particular authz module
+  @param {Object} settings={} - the settings to be passed to the adapter
+  @param {String} settings.clientId - the client id/ app Id of the protected service
+  @param {String} settings.clientSecret - the client secret
+  @param {String} settings.scopes - comma separated list of "scopes" you want access to
+  @returns {void}
+  @example
+  oauth2.addKeycloak({
+      name: 'keycloak',
+      settings: {
+        base: 'http://192.168.1.15:8080/auth',
+        clientId: 'shoot-third-party',
+        realm: "shoot-realm"
+      }
+    });  
+*/
+OAuth2.prototype.addFacebook = function (object) {
+  enrich(this, object);
+  cordova.exec(null, null, 'OAuth2Plugin', 'addFacebook', [object.settings]);
 };
 
 /**

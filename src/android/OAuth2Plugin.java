@@ -81,6 +81,18 @@ public class OAuth2Plugin extends BasePlugin {
     return add(data, callbackContext);
   }
 
+  public boolean addFacebook(JSONObject data, CallbackContext callbackContext) throws JSONException, MalformedURLException {
+    Log.d(TAG, "add facebook account");
+
+    data.put("base", "https://");
+    data.put("authzEndpoint", "www.facebook.com/dialog/oauth");
+    data.put("accessTokenEndpoint", "graph.facebook.com/oauth/access_token");
+    data.put("redirectURL", "https://localhost/");
+    data.put("refreshTokenEndpoint", "graph.facebook.com/oauth/access_token");
+
+    return add(data, callbackContext);
+  }
+
   public boolean requestAccess(String name, final CallbackContext callbackContext) {
     Log.d(TAG, "requesting access");
 
