@@ -98,7 +98,7 @@ OAuth2.prototype.addGoogle = function (object) {
   oauth2.addKeycloak({
       name: 'keycloak',
       settings: {
-        base: 'http://192.168.1.15:8080/auth',
+        base: '<keycloak server url e.g http(s)//host:port/context >,
         clientId: 'shoot-third-party',
         realm: "shoot-realm"
       }
