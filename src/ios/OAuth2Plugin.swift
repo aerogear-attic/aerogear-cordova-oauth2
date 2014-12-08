@@ -51,6 +51,24 @@ import Foundation
         
         AccountManager.addKeycloakAccount(keycloakConfig)
     }
+
+    func addFacebook(command: CDVInvokedUrlCommand) {
+        let args = command.arguments[0] as [String: String]
+        
+        var scopes: [String] = []
+        if args["scopes"] != nil {
+            scopes = args["scopes"]!.componentsSeparatedByString(",")
+        }
+        
+        let facebookConfig = FacebookConfig(
+            clientId: args["clientId"]!,
+            clientSecret: args["clientSecret"]!,
+            scopes:scopes)
+        
+        facebookConfig.accountId = args["accountId"]
+        
+        AccountManager.addFacebookAccount(facebookConfig)
+    }
     
     func requestAccess(command: CDVInvokedUrlCommand) {
         let accountId = command.arguments[0] as String

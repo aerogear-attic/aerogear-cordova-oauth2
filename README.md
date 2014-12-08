@@ -61,6 +61,15 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
         realm: "shoot-realm"
       }
     });
+    
+    oauth2.addFacebook({
+      name: 'facebook',
+      settings: {
+        clientId: '1511044619160050',
+        clientSecret: '3b08052d3d96e2120f2c53a36eebd02f',
+        scopes: 'photo_upload, publish_actions'
+      }
+    });    
 
     oauth2.gplus.requestAccess()
       .then(function (token) {
@@ -72,6 +81,10 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
       });
   },
 ```
+
+### Facebook iOS
+
+For our OAuth2 on iOS plugin we use external browser approach, in order to re-enter the app you need to provide a URI schema. This is called the ```redirect_uri```. By convention Google uses your iOS bundle. Facebook uses as ```redirect_uri``` 2 letters ```fb``` followed by the ```client_id```. As the ```client_id``` is not in your config.xml, once the project is deployed you will have to go to [project_name]-info.plist and modify it to change fbYYY where YYY is your facebook ```client_id```.
 
 ### Workaround for iOS
 
