@@ -73,7 +73,7 @@
         </dict>
         <dict>
           <key>CFBundleURLName</key>
-          <string>fb$PACKAGE_NAME</string>
+          <string>fbYYY</string>
           <key>CFBundleURLSchemes</key>
           <array>
             <string>fb$PACKAGE_NAME</string>
