@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation.Collections;
-using Windows.Security.Authentication.Web;
+using Windows.System;
 
 namespace AeroGear.OAuth2
 {
@@ -19,6 +16,7 @@ namespace AeroGear.OAuth2
 
         protected SessionRepositry repository = new TrustedSessionRepository();
         protected Session session;
+        private string running;
 
         public Config config { get; private set; }
 
@@ -61,7 +59,7 @@ namespace AeroGear.OAuth2
                 }
                 else
                 {
-                    RequestAuthorizationCode();
+                    await RequestAuthorizationCode();
                     return false;
                 }
             }
@@ -71,13 +69,13 @@ namespace AeroGear.OAuth2
             }
         }
 
-        public virtual void RequestAuthorizationCode()
+        public async virtual Task RequestAuthorizationCode()
         {
             var param = string.Format(PARAM_TEMPLATE, config.scope, Uri.EscapeDataString(config.redirectURL), Uri.EscapeDataString(config.clientId));
             var uri = new Uri(config.baseURL + config.authzEndpoint).AbsoluteUri + param;
 
-            var values = new ValueSet() { { "name", config.accountId } };
-            WebAuthenticationBroker.AuthenticateAndContinue(new Uri(uri), new Uri(config.redirectURL), values, WebAuthenticationOptions.None);
+            this.running = config.accountId;
+            await Launcher.LaunchUriAsync(new Uri(uri));
         }
 
         public Tuple<string, string> AuthorizationFields()
@@ -87,11 +85,6 @@ namespace AeroGear.OAuth2
                 return Tuple.Create("Authorization", "Bearer " + session.accessToken);
             }
             return null;
-        }
-
-        public AuthenticationHeaderValue AuthenticationHeaderValue()
-        {
-            return new AuthenticationHeaderValue("Bearer", session.accessToken);
         }
 
         protected virtual async Task RefreshAccessToken()
@@ -104,11 +97,11 @@ namespace AeroGear.OAuth2
             await UpdateToken(parameters);
         }
 
-        public async Task ExtractCode(WebAuthenticationBrokerContinuationEventArgs args)
+        public async Task ExtractCode(WebAuthenticationResult args)
         {
-            if (args.WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success) 
+            if (args.ResponseStatus == WebAuthenticationStatus.Success) 
             {
-                IDictionary<string, string> queryParams = ParseQueryString(new Uri(args.WebAuthenticationResult.ResponseData).Query);
+                IDictionary<string, string> queryParams = ParseQueryString(new Uri(args.ResponseData).Query);
                 if (queryParams.ContainsKey("code"))
                 {
                     await ExchangeAuthorizationCodeForAccessToken(queryParams["code"]);
@@ -120,7 +113,7 @@ namespace AeroGear.OAuth2
             }
             else
             {
-                throw new Exception(string.Format("user cancelled the authorization status: '{0}': details: {1}", args.WebAuthenticationResult.ResponseStatus, args.WebAuthenticationResult.ResponseErrorDetail));
+                throw new Exception(string.Format("user cancelled the authorization status: '{0}': details: {1}", args.ResponseStatus, args.ResponseErrorDetail));
             }
         }
 

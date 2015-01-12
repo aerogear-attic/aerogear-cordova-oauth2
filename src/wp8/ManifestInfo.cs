@@ -6,6 +6,7 @@ using System.Linq;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using System.Collections.Generic;
+using System.IO;
 
 namespace AeroGear.OAuth2
 {
@@ -30,7 +31,8 @@ namespace AeroGear.OAuth2
         private async Task init()
         {
             StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
-            string manifestXml = await FileIO.ReadTextAsync(file);
+            var stream = new StreamReader((await file.OpenAsync(FileAccessMode.Read)).AsStream());
+            string manifestXml = await stream.ReadToEndAsync();
             document = XDocument.Parse(manifestXml);
             xname = XNamespace.Get("http://schemas.microsoft.com/appx/2010/manifest");
         }

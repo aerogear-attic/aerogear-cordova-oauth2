@@ -75,15 +75,9 @@ namespace AeroGear.OAuth2
         {
             try
             {
-                using (var fs = await file.OpenAsync(FileAccessMode.Read))
-                using (var inStream = fs.GetInputStreamAt(0))
-                using (var reader = new DataReader(inStream))
+                using (var stream = new StreamReader((await file.OpenAsync(FileAccessMode.Read)).AsStream()))
                 {
-                    await reader.LoadAsync((uint)fs.Size);
-                    string data = reader.ReadString((uint)fs.Size);
-                    reader.DetachStream();
-
-                    return data;
+                    return await stream.ReadToEndAsync();
                 }
             }
             catch (Exception)
