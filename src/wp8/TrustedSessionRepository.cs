@@ -3,8 +3,7 @@ using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.DataProtection;
+using System.Security.Cryptography;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
@@ -12,7 +11,7 @@ namespace AeroGear.OAuth2
 {
     public class TrustedSessionRepository : SessionRepositry
     {
-        private const BinaryStringEncoding ENCODING = BinaryStringEncoding.Utf8;
+        byte[] saltBytes = Encoding.Unicode.GetBytes(new Random().Next().ToString());
         private DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Session));
 
         public async Task Save(string accessToken, string refreshToken, string accessTokenExpiration, string refreshTokenExpiration)
@@ -49,24 +48,48 @@ namespace AeroGear.OAuth2
             StorageFolder local = Windows.Storage.ApplicationData.Current.LocalFolder;
             var file = await local.GetFileAsync(name + ".txt");
 
-            var text = await FileIO.ReadBufferAsync(file);
-
-            DataProtectionProvider Provider = new DataProtectionProvider();
-            IBuffer buffUnprotected = await Provider.UnprotectAsync(text);
-
-            return CryptographicBuffer.ConvertBinaryToString(ENCODING, buffUnprotected);
+            var text = await ReadFileContentsAsync(file);
+            byte[] result = ProtectedData.Unprotect(Encoding.UTF8.GetBytes(text), saltBytes);
+            return Encoding.UTF8.GetString(result, 0, result.Length);
         }
 
         public async Task<IStorageFile> SaveAccessToken(string token, string name)
         {
-            DataProtectionProvider Provider = new DataProtectionProvider("LOCAL=user");
-            IBuffer buffMsg = CryptographicBuffer.ConvertStringToBinary(token, ENCODING);
-            IBuffer buffProtected = await Provider.ProtectAsync(buffMsg);
+            byte[] protectedToken = ProtectedData.Protect(Encoding.UTF8.GetBytes(token), saltBytes);
 
             StorageFolder local = Windows.Storage.ApplicationData.Current.LocalFolder;
             var file = await local.CreateFileAsync(name + ".txt", CreationCollisionOption.ReplaceExisting);
-            await FileIO.WriteBufferAsync(file, buffProtected);
+            await WriteDataToFileAsync(file, protectedToken);
             return file;
+        }
+
+        public async Task WriteDataToFileAsync(StorageFile file, byte[] data)
+        {
+            using (var s = await file.OpenStreamForWriteAsync())
+            {
+                await s.WriteAsync(data, 0, data.Length);
+            }
+        }
+
+        public async Task<string> ReadFileContentsAsync(StorageFile file)
+        {
+            try
+            {
+                using (var fs = await file.OpenAsync(FileAccessMode.Read))
+                using (var inStream = fs.GetInputStreamAt(0))
+                using (var reader = new DataReader(inStream))
+                {
+                    await reader.LoadAsync((uint)fs.Size);
+                    string data = reader.ReadString((uint)fs.Size);
+                    reader.DetachStream();
+
+                    return data;
+                }
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
     }
 }

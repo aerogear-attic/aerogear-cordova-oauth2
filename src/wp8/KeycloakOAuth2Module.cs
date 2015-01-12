@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,12 +21,12 @@ namespace AeroGear.OAuth2
         {
             Session session = await base.ParseResponse(respondeStream);
             var decoded = DecodeToken(session.refreshToken);
-            var time = Convert.ToInt32(decoded["exp"]) -Convert.ToInt32(decoded["iat"]);
+            var time = decoded.exp - decoded.iat;
             session.refreshTokenExpirationDate = DateTime.Now.AddSeconds(time);
             return session;
         }
 
-        public dynamic DecodeToken(string token)
+        public KeyCloakResponse DecodeToken(string token)
         {
             string toDecode = token.Split('.')[1];
             string stringtoDecode = toDecode.Replace('-', '+');
@@ -44,7 +44,14 @@ namespace AeroGear.OAuth2
             byte[] data = Convert.FromBase64String(stringtoDecode);
             string json = Encoding.UTF8.GetString(data, 0, data.Length);
 
-            return JsonConvert.DeserializeObject<dynamic>(json);
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(KeyCloakResponse));
+            return (KeyCloakResponse)serializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(json)));
         }
+    }
+
+    public class KeyCloakResponse
+    {
+        public int exp { get; set; }
+        public int iat { get; set; }
     }
 }
