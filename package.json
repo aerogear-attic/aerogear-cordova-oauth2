@@ -1,0 +1,15 @@
+{
+    "version": "1.0.0",
+    "name": "org.jboss.aerogear.cordova.oauth2",
+    "cordova_name": "OAuth2",
+    "platforms": [
+        "android",
+        "ios"
+    ],
+    "engines": [
+        {
+            "name": "cordova",
+            "version": ">=3.4.0"
+        }
+    ]
+}

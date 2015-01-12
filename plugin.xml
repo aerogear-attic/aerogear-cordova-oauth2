@@ -107,4 +107,27 @@
     <source-file src="src/ios/AppDelegate+url.m" />
     <source-file src="src/ios/AppDelegate+url.h" />
   </platform>
+  <platform name="wp8">
+    <config-file target="config.xml" parent="/*">
+      <feature name="OAuth2Plugin">
+        <param name="wp-package" value="OAuth2Plugin"/>
+      </feature>
+    </config-file>
+    <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App" after="Tokens">
+      <Extensions>
+        <Protocol Name="your.protocol"/>
+      </Extensions>
+    </config-file>    
+    <source-file src="src/wp8/OAuth2Plugin.cs"/>
+    <source-file src="src/wp8/AccountManager.cs"/>
+    <source-file src="src/wp8/AuthzModule.cs"/>
+    <source-file src="src/wp8/AuthzWebRequest.cs"/>
+    <source-file src="src/wp8/Config.cs"/>
+    <source-file src="src/wp8/FacebookOAuth2Module.cs"/>
+    <source-file src="src/wp8/KeycloakOAuth2Module.cs"/>
+    <source-file src="src/wp8/ManifestInfo.cs"/>
+    <source-file src="src/wp8/OAuth2Module.cs"/>
+    <source-file src="src/wp8/OAuth2Session.cs"/>
+    <source-file src="src/wp8/TrustedSessionRepository.cs"/>
+  </platform>
 </plugin>
