@@ -110,17 +110,25 @@
     <source-file src="src/ios/AppDelegate+url.h" />
   </platform>
   <platform name="wp8">
+    <info>
+      open platforms/wp8/App.xaml.cs add the following on line 140:
+      RootFrame.UriMapper = new OAuthUriMapper();
+    </info>
     <config-file target="config.xml" parent="/*">
       <feature name="OAuth2Plugin">
         <param name="wp-package" value="OAuth2Plugin"/>
       </feature>
     </config-file>
     <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App" after="Tokens">
-      <Extensions>
-        <Protocol Name="your.protocol"/>
+        <Extensions>
+          <Protocol Name="your.protocol" NavUriFragment="encodedLaunchUri=%s" TaskID="_default"/>
       </Extensions>
     </config-file>    
     <source-file src="src/wp8/OAuth2Plugin.cs"/>
+    <source-file src="src/wp8/OAuthUriMapper.cs"/>
+    <source-file src="src/wp8/P.xaml"/>
+    <source-file src="src/wp8/P.xaml.cs"/>
+    
     <source-file src="src/wp8/AccountManager.cs"/>
     <source-file src="src/wp8/AuthzModule.cs"/>
     <source-file src="src/wp8/AuthzWebRequest.cs"/>

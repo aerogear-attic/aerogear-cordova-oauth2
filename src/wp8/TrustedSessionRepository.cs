@@ -11,7 +11,7 @@ namespace AeroGear.OAuth2
 {
     public class TrustedSessionRepository : SessionRepositry
     {
-        byte[] saltBytes = Encoding.Unicode.GetBytes(new Random().Next().ToString());
+        byte[] saltBytes = Encoding.Unicode.GetBytes("897752749");
         private DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Session));
 
         public async Task Save(string accessToken, string refreshToken, string accessTokenExpiration, string refreshTokenExpiration)

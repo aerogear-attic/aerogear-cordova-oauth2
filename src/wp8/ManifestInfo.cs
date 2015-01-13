@@ -13,37 +13,35 @@ namespace AeroGear.OAuth2
     public class ManifestInfo
     {
         private XDocument document;
-        private XNamespace xname;
-        private static ManifestInfo instance;
+        private static volatile ManifestInfo instance;
+        private static object syncRoot = new Object();
 
         protected ManifestInfo() { }
 
-        private async static Task<ManifestInfo> GetInstance()
+        private static ManifestInfo GetInstance()
         {
             if (instance == null)
             {
-                instance = new ManifestInfo();
-                await instance.init();
+                lock (syncRoot)
+                {
+                    instance = new ManifestInfo();
+                    instance.document = instance.GetDocument();
+                }
             }
             return instance;
         }
 
-        private async Task init()
+        private XDocument GetDocument()
         {
-            StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
-            var stream = new StreamReader((await file.OpenAsync(FileAccessMode.Read)).AsStream());
-            string manifestXml = await stream.ReadToEndAsync();
-            document = XDocument.Parse(manifestXml);
-            xname = XNamespace.Get("http://schemas.microsoft.com/appx/2010/manifest");
+            return XDocument.Load("WMAppManifest.xml");
         }
 
-        public async static Task<string> GetProtocol()
+        public static string GetProtocol()
         {
-            var instance = await GetInstance();
+            var instance = GetInstance();
 
-            var attribute = (from node in instance.document.Descendants(instance.xname + "Extension")
-                             where (string)node.Attribute("Category") == "windows.protocol"
-                             select node.Element(instance.xname + "Protocol").Attribute("Name")).Single();
+            var attribute = (from node in instance.document.Descendants("Extensions")
+                             select node.Element("Protocol").Attribute("Name")).Single();
 
             return attribute.Value;
         }

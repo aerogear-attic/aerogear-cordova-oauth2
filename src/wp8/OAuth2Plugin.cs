@@ -19,11 +19,11 @@ using WPCordovaClassLib.Cordova.JSON;
 
 using AeroGear.OAuth2;
 using WPCordovaClassLib.Cordova;
-using System.Threading.Tasks;
+using System.IO.IsolatedStorage;
 
 public class OAuth2Plugin : BaseCommand
 {
-    public async Task add(string unparsedConfig)
+    public async void add(string unparsedConfig)
     {
         var options = JsonHelper.Deserialize<string[]>(unparsedConfig)[0];
         var config = JsonHelper.Deserialize<Config>(options);
@@ -33,21 +33,28 @@ public class OAuth2Plugin : BaseCommand
 
     public async void addGoogle(string unparsedConfig)
     {
-        await add(unparsedConfig);
+        var options = JsonHelper.Deserialize<string[]>(unparsedConfig)[0];
+        var config = JsonHelper.Deserialize<Config>(options);
+        GoogleConfig googleConfig = GoogleConfig.Create(config.clientId, config.scopes, config.accountId);
+        await AccountManager.AddAccount(googleConfig);
     }
 
     public async void addKeycloak(string unparsedConfig)
     {
         var options = JsonHelper.Deserialize<string[]>(unparsedConfig)[0];
         var config = JsonHelper.Deserialize<KeycloakConfig>(options);
-
-        await AccountManager.AddKeyCloak(config);
+        KeycloakConfig keycloak = KeycloakConfig.Create(config.clientId, config.host, config.realm);
+        await AccountManager.AddKeyCloak(keycloak);
     }
 
     public async void requestAccess(string unparsed)
     {
         var accountId = JsonHelper.Deserialize<string[]>(unparsed)[0];
         var module = AccountManager.GetAccountByName(accountId);
+
+        AccountManager.SaveSate();
+        IsolatedStorageSettings.ApplicationSettings["module"] = accountId;
+
         await module.RequestAccessAndContinue();
 
         PluginResult result = new PluginResult(PluginResult.Status.OK);

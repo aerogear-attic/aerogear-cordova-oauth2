@@ -16,7 +16,6 @@ namespace AeroGear.OAuth2
 
         protected SessionRepositry repository = new TrustedSessionRepository();
         protected Session session;
-        private string running;
 
         public Config config { get; private set; }
 
@@ -74,7 +73,6 @@ namespace AeroGear.OAuth2
             var param = string.Format(PARAM_TEMPLATE, config.scope, Uri.EscapeDataString(config.redirectURL), Uri.EscapeDataString(config.clientId));
             var uri = new Uri(config.baseURL + config.authzEndpoint).AbsoluteUri + param;
 
-            this.running = config.accountId;
             await Launcher.LaunchUriAsync(new Uri(uri));
         }
 
@@ -97,27 +95,7 @@ namespace AeroGear.OAuth2
             await UpdateToken(parameters);
         }
 
-        public async Task ExtractCode(WebAuthenticationResult args)
-        {
-            if (args.ResponseStatus == WebAuthenticationStatus.Success) 
-            {
-                IDictionary<string, string> queryParams = ParseQueryString(new Uri(args.ResponseData).Query);
-                if (queryParams.ContainsKey("code"))
-                {
-                    await ExchangeAuthorizationCodeForAccessToken(queryParams["code"]);
-                }
-                else
-                {
-                    throw new Exception("no code parameter found in redirect");
-                }
-            }
-            else
-            {
-                throw new Exception(string.Format("user cancelled the authorization status: '{0}': details: {1}", args.ResponseStatus, args.ResponseErrorDetail));
-            }
-        }
-
-        private async Task ExchangeAuthorizationCodeForAccessToken(string code)
+        public async Task ExchangeAuthorizationCodeForAccessToken(string code)
         {
             var parameters = new Dictionary<string, string>() { { "grant_type", "authorization_code" }, { "code", code }, { "client_id", config.clientId }, { "redirect_uri", config.redirectURL } };
             if (config.clientSecret != null)
