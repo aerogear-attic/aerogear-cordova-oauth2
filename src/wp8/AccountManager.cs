@@ -84,16 +84,22 @@ namespace AeroGear.OAuth2
 
         private async static Task RestoreAccount(Config config)
         {
-            OAuth2Module module = await OAuth2Module.Create(config);
+            OAuth2Module module;
+            if (config.GetType() == typeof(KeycloakConfig))
+            {
+                module = await KeycloakOAuth2Module.Create(config);
+            }
+            else if (config.GetType() == typeof(FacebookConfig))
+            {
+                module = await FacebookOAuth2Module.Create(config);
+            }
+            else
+            {
+                module = await OAuth2Module.Create(config);
+            }
+            
             Instance.modules[config.accountId] = module;
         }
-
-        private async static Task RestoreAccount(KeycloakConfig config)
-        {
-            OAuth2Module module = await KeycloakOAuth2Module.Create(config);
-            Instance.modules[config.accountId] = module;
-        }
-
     }
 
     [DataContract]
