@@ -34,24 +34,28 @@ namespace AeroGear.OAuth2
     [DataContract]
     public class Session
     {
+        [DataMember]
         public string accountId { get; set; }
-
         [DataMember(Name = "access_token")]
         public string accessToken { get; set; }
+        [DataMember]
         public DateTime accessTokenExpirationDate { get; set; }
+        [DataMember]
         public DateTime refreshTokenExpirationDate { get; set; }
-
 
         [DataMember(Name = "expires_in")]
         public int accessTokenExpiration
         {
             get
             {
-                return 0;
+                return -1;
             }
             set
             {
-                accessTokenExpirationDate = DateTime.Now.AddSeconds(value);
+                if (value != -1)
+                {
+                    accessTokenExpirationDate = DateTime.Now.AddSeconds(value);
+                }
             }
         }
 
