@@ -57,7 +57,7 @@ public class OAuth2Plugin : BaseCommand
 
         await module.RequestAccessAndContinue();
 
-        PluginResult result = new PluginResult(PluginResult.Status.OK);
+        PluginResult result = new PluginResult(PluginResult.Status.OK, module.GetAccessToken());
         DispatchCommandResult(result);
     }
 }

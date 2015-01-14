@@ -85,6 +85,11 @@ namespace AeroGear.OAuth2
             return null;
         }
 
+        public string GetAccessToken()
+        {
+            return session.accessToken;
+        }
+
         protected virtual async Task RefreshAccessToken()
         {
             var parameters = new Dictionary<string, string>() { { "refresh_token", session.refreshToken }, { "client_id", config.clientId }, { "grant_type", "refresh_token" } };
