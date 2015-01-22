@@ -45,9 +45,13 @@ public class OAuth2Plugin extends BasePlugin {
         .setAccessTokenEndpoint(data.getString("accessTokenEndpoint"))
         .setAuthzEndpoint(data.getString("authzEndpoint"))
         .setClientId(data.getString("clientId"))
-        .setClientSecret(data.getString("clientSecret"))
         .setRefreshEndpoint(data.getString("refreshTokenEndpoint"))
         .setRedirectURL(data.getString("redirectURL"));
+
+    if (data.has("clientSecret")) {
+      configuration.setClientSecret(data.getString("clientSecret"));
+
+    }
 
     if (data.has("scopes")) {
       configuration.setScopes(Arrays.asList(data.getString("scopes").split(",")));
