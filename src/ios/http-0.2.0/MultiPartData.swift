@@ -18,7 +18,7 @@
 import Foundation
 
 /**
-Represents a multipart object containing a file plus metadata to be processed during upload
+Represents a multipart object containing a file plus metadata to be processed during upload.
 */
 public class MultiPartData {
 
@@ -40,15 +40,15 @@ public class MultiPartData {
     :returns: the newly created multipart data
     */
     public init(url: NSURL, mimeType: String) {
-        self.name = url.lastPathComponent
-        self.filename = url.lastPathComponent
+        self.name = url.lastPathComponent!
+        self.filename = url.lastPathComponent!
         self.mimeType = mimeType;
         
         self.data = NSData(contentsOfURL: url)!
     }
     
     /**
-    Initialize a multipart object using an NSData plus metadata
+    Initialize a multipart object using an NSData plus metadata.
     
     :param: data       the actual data to be uploaded
     :param: name     the 'name' to be used on the request
