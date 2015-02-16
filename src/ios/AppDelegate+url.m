@@ -16,7 +16,6 @@
  */
 
 #import "AppDelegate+url.h"
-#import "AeroGearHttp.h"
 #import <objc/runtime.h>
 
 @implementation AppDelegate (url)

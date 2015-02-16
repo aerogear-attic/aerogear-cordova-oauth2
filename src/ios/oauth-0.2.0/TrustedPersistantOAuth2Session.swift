@@ -17,16 +17,16 @@
 import Foundation
 
 import Security
-// TODO AGIOS-256: Keychain wrapper implemented as part of AGIOS-103
-// should be moved in aerogear-ios-crypto
 import UIKit
 
-//public enum ACL {
-//    case WhenUnlockedAndPasswordSet
-//    case WhenUnlocked
-//    // TODO AGIOS-258 add acl for background processing
-//}
+/**
+The type of token to be saved in KeychainWrap:
 
+- AccessToken: access token
+- ExpirationDate: access token expiration date
+- RefreshToken: refresh token
+- RefreshExpirationDate: refresh token expiration date (used for Keycloak adapter only)
+*/
 public enum TokenType: String {
     case AccessToken = "AccessToken"
     case RefreshToken = "RefreshToken"
@@ -35,19 +35,42 @@ public enum TokenType: String {
 }
 
 /**
-A handy keychain wrapper. It saves your oauth2 tokens using WhenPasscodeSet ACL.
+A handy Keychain wrapper. It saves your OAuth2 tokens using WhenPasscodeSet ACL.
 */
 public class KeychainWrap {
+    
+    /**
+    The service id. By default set to apple bundle id.
+    */
     public var serviceIdentifier: String
     
-    public init() {
-        if let bundle = NSBundle.mainBundle().bundleIdentifier {
-            self.serviceIdentifier = bundle
-        } else {
+    /**
+    The group id is Keychain access group which is used for sharing keychain content accross multiple apps issued from same developer. By default there is no access group.
+    */
+    public var groupId: String?
+    
+    /**
+    Initialize KeychainWrapper setting default values.
+    
+    :param: serviceId   unique service, defulated to bundleId
+    :param: groupId     used for SSO between app issued from same developer certificate.
+    */
+    public init(serviceId: String? =  NSBundle.mainBundle().bundleIdentifier, groupId: String? = nil) {
+        if serviceId == nil {
             self.serviceIdentifier = "unkown"
+        } else {
+            self.serviceIdentifier = serviceId!
         }
+        self.groupId = groupId
     }
     
+    /**
+    Save tokens information in Keychain.
+    
+    :param: key         usually use accountId for oauth2 module, any unique string
+    :param: tokenType   type of token: access, refresh
+    :param: value       string value of the token
+    */
     public func save(key: String, tokenType: TokenType, value: String) -> Bool {
         var dataFromString: NSData? = value.dataUsingEncoding(NSUTF8StringEncoding)
         if (dataFromString == nil) {
@@ -56,26 +79,13 @@ public class KeychainWrap {
         
         // Instantiate a new default keychain query
         var keychainQuery = NSMutableDictionary()
+        if let groupId = self.groupId {
+            keychainQuery[kSecAttrAccessGroup as String] = groupId
+        }
         keychainQuery[kSecClass as String] = kSecClassGenericPassword
         keychainQuery[kSecAttrService as String] = self.serviceIdentifier
         keychainQuery[kSecAttrAccount as String] = key + "_" + tokenType.rawValue
         keychainQuery[kSecAttrAccessible as String] = kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly
-        
-        // TODO AGIOS-259 configure Swift version to get touchID access control
-        // As of version beta7 kSecAccessControlUserPresence is not available in swift
-        /*
-        var error:  Unmanaged<CFError>?
-        var sac: Unmanaged<SecAccessControl>?
-        sac = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
-            kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, kSecAccessControlUserPresence, &error)
-        
-        let opaque = sac?.toOpaque()
-        if let op = opaque? {
-            let retrievedData = Unmanaged<SecAccessControl>.fromOpaque(op).takeUnretainedValue()
-            keychainQuery[kSecAttrAccessControl] = retrievedData
-            keychainQuery[kSecUseNoAuthenticationUI] = false
-        }
-        */
         
         // Search for the keychain items
         let statusSearch: OSStatus = SecItemCopyMatching(keychainQuery, nil)
@@ -108,8 +118,17 @@ public class KeychainWrap {
         return true
     }
     
+    /**
+    Read tokens information in Keychain. If the entry is not found return nil.
+    
+    :param: userAccount     key of the keychain entry, usually accountId for oauth2 module
+    :param: tokenType       type of token: access, refresh
+    */
     public func read(userAccount: String, tokenType: TokenType) -> NSString? {
         var keychainQuery = NSMutableDictionary()
+        if let groupId = self.groupId {
+            keychainQuery[kSecAttrAccessGroup as String] = groupId
+        }
         keychainQuery[kSecClass as String] = kSecClassGenericPassword
         keychainQuery[kSecAttrService as String] = self.serviceIdentifier
         keychainQuery[kSecAttrAccount as String] = userAccount + "_" + tokenType.rawValue
@@ -117,10 +136,8 @@ public class KeychainWrap {
         keychainQuery[kSecAttrAccessible as String] = kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly
         
         var dataTypeRef: Unmanaged<AnyObject>?
-        
         // Search for the keychain items
         let status: OSStatus = SecItemCopyMatching(keychainQuery, &dataTypeRef)
-        
         if (status == errSecItemNotFound) {
             println("\(tokenType.rawValue) not found")
             return nil
@@ -130,9 +147,7 @@ public class KeychainWrap {
         }
         
         let opaque = dataTypeRef?.toOpaque()
-        
         var contentsOfKeychain: NSString?
-        
         if let op = opaque? {
             let retrievedData = Unmanaged<NSData>.fromOpaque(op).takeUnretainedValue()
             
@@ -145,7 +160,9 @@ public class KeychainWrap {
         return contentsOfKeychain
     }
     
-    // when uninstalling app you may wish to clear keyclain app info
+    /**
+    Clear all keychain entries. Note that Keychain can only be cleared progemmatically.
+    */
     public func resetKeychain() -> Bool {
         return self.deleteAllKeysForSecClass(kSecClassGenericPassword) &&
         self.deleteAllKeysForSecClass(kSecClassInternetPassword) &&
@@ -157,7 +174,6 @@ public class KeychainWrap {
     func deleteAllKeysForSecClass(secClass: CFTypeRef) -> Bool {
         var keychainQuery = NSMutableDictionary()
         keychainQuery[kSecClass as String] = secClass
-
         let result:OSStatus = SecItemDelete(keychainQuery)
         if (result == errSecSuccess) {
             return true
@@ -167,16 +183,8 @@ public class KeychainWrap {
     }
 }
 
-
-// TODO When passcode is set in iPhone settings => ok
-// if passcode is not set (not secure phone) session will fail to save tokens 
-// in keychain, implement a customizable fallback mechanism. Maybe in form of 
-// closure taken as init param. 
-// When passcode is not set to securely safe password we need to encrypt
-// so we need user to be prompted to enter a password
-
 /**
-An OAuth2Session implementation the permanent stores OAuth2 metadata using the keychain.
+An OAuth2Session implementation to store OAuth2 metadata using the Keychain.
 */
 public class TrustedPersistantOAuth2Session: OAuth2Session {
     
@@ -204,7 +212,9 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
         }
     }
 
-    
+    /**
+    The access token. The information is read securely from Keychain.
+    */
     public var accessToken: String? {
         get {
             return self.keychain.read(self.accountId, tokenType: .AccessToken)
@@ -215,7 +225,10 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
             }
         }
     }
-    
+
+    /**
+    The refresh token. The information is read securely from Keychain.
+    */
     public var refreshToken: String? {
         get {
             return self.keychain.read(self.accountId, tokenType: .RefreshToken)
@@ -249,22 +262,21 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
     private let keychain: KeychainWrap
     
     /**
-    * Check validity of accessToken. return true if still valid, false when expired.
+    Check validity of accessToken. return true if still valid, false when expired.
     */
     public func tokenIsNotExpired() -> Bool {
         return  self.accessTokenExpirationDate?.timeIntervalSinceDate(NSDate()) > 0
     }
     
     /**
-    * Check validity of refreshToken. return true if still valid, false when expired.
+    Check validity of refreshToken. return true if still valid, false when expired.
     */
     public func refreshTokenIsNotExpired() -> Bool {
         return  self.refreshTokenExpirationDate?.timeIntervalSinceDate(NSDate()) > 0
     }
     
     /**
-    * Save in memory tokens information. Saving tokens allow you to refresh accesstoken transparently for the user without prompting
-    * for grant access.
+    Save in memory tokens information. Saving tokens allow you to refresh accesstoken transparently for the user without prompting for grant access.
     */
     public func saveAccessToken(accessToken: String?, refreshToken: String?, accessTokenExpiration: String?, refreshTokenExpiration: String?) {
         self.accessToken = accessToken
@@ -278,22 +290,36 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
             self.refreshTokenExpirationDate = now.dateByAddingTimeInterval(inter)
         }
     }
-    public func saveAccessToken() {
+    
+    /**
+    Clear all tokens. Method used when doing logout or revoke.
+    */
+    public func clearTokens() {
         self.accessToken = nil
         self.refreshToken = nil
         self.accessTokenExpirationDate = nil
         self.refreshTokenExpirationDate = nil
     }
     
-    public init(accountId: String, accessToken: String? = nil, accessTokenExpirationDate: NSDate? = nil, refreshToken: String? = nil, refreshTokenExpirationDate: NSDate? = nil) {
+    /**
+    Initialize TrustedPersistantOAuth2Session using account id. Account id is the service id used for keychain storage.
+    
+    :param: accountId uniqueId to identify the oauth2module
+    :param: groupId used for SSO between app issued from same developer certificate.
+    :param: accessToken optional parameter to initilaize the storage with initial values
+    :param: accessTokenExpirationDate optional parameter to initilaize the storage with initial values
+    :param: refreshToken optional parameter to initilaize the storage with initial values
+    :param: refreshTokenExpirationDate optional parameter to initilaize the storage with initial values
+    */
+    public init(accountId: String, groupId: String? = nil, accessToken: String? = nil, accessTokenExpirationDate: NSDate? = nil, refreshToken: String? = nil, refreshTokenExpirationDate: NSDate? = nil) {
         self.accountId = accountId
-        self.keychain = KeychainWrap()
-        // TODO Shoot config to reset all keychain + choose ACL type: with or without touchID
-        // for now to clear keychain contain for your app uncomment line below
-        //self.keychain.resetKeychain()
+        if groupId != nil {
+            self.keychain = KeychainWrap(serviceId: groupId, groupId: groupId)
+        } else {
+            self.keychain = KeychainWrap()
+        }
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         self.accessTokenExpirationDate = accessTokenExpirationDate
         self.refreshTokenExpirationDate = refreshTokenExpirationDate
-    }
-}
+    }}

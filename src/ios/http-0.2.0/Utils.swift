@@ -18,21 +18,16 @@
 import Foundation
 
 /**
- The protocol that response serializers must adhere to
+Handy extensions and utilities.
 */
-public protocol ResponseSerializer {
+extension String {
     
-    /**
-     Deserialize the response received
-
-     :returns: the serialized response
-    */
-    func response(data: NSData) -> (AnyObject?)
-    
-    /**
-     Validate the response received
-    
-     :returns:  either true or false if the response is valid for this particular serializer
-    */
-    func validateResponse(response: NSURLResponse!, data: NSData, error: NSErrorPointer) -> Bool
+    public func urlEncode() -> String {
+        let encodedURL = CFURLCreateStringByAddingPercentEscapes(nil,
+            self as NSString,
+            nil,
+            "!@#$%&*'();:=+,/?[]",
+            CFStringBuiltInEncodings.UTF8.rawValue)
+        return encodedURL as NSString
+    }
 }

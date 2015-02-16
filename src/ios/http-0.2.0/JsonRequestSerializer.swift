@@ -18,7 +18,7 @@
 import Foundation
 
 /**
- A request serializer to JSON objects
+A request serializer to JSON objects/
 */
 public class JsonRequestSerializer:  HttpRequestSerializer {
     
@@ -38,6 +38,13 @@ public class JsonRequestSerializer:  HttpRequestSerializer {
                 if (body != nil) {
                     request.setValue("\(body?.length)", forHTTPHeaderField: "Content-Length")
                     request.HTTPBody = body
+                }
+            }
+            
+            // apply headers to new request
+            if(headers != nil) {
+                for (key,val) in headers! {
+                    request.addValue(val, forHTTPHeaderField: key)
                 }
             }
 
