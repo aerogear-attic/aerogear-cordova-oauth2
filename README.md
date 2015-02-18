@@ -52,7 +52,7 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
         scopes: 'https://www.googleapis.com/auth/drive'
       }
     });
-    
+
     oauth2.addKeycloak({
       name: 'keycloak',
       settings: {
@@ -61,7 +61,7 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
         realm: "shoot-realm"
       }
     });
-    
+
     oauth2.addFacebook({
       name: 'facebook',
       settings: {
@@ -69,7 +69,7 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
         clientSecret: '3b08052d3d96e2120f2c53a36eebd02f',
         scopes: 'photo_upload, publish_actions'
       }
-    });    
+    });
 
     oauth2.gplus.requestAccess()
       .then(function (token) {
@@ -93,10 +93,10 @@ Our iOS version is using a Swift library. Cordova is not yet fully supporting Sw
 1. change `deployment target` to 7.0 or above
 ![deployment target](ios_step_1.png "deployment target")
 
-2. add `[Project Name]/Plugins/org.jboss.aerogear.cordova.oauth2/Bridging-Header.h` to Objective-c Bridging Header    under the Swift Compiler - Code Generation options
+2. add `../../plugins/org.jboss.aerogear.cordova.oauth2/src/ios/Bridging-Header.h` to Objective-c Bridging Header under the Swift Compiler - Code Generation options
 ![bridging header](ios_step_2.png "bridging header")
 
-3. set LD_RUNPATH_SEARCH_PATHS to "$(inherited) @executable_path/Frameworks"
+3. set `Runpath Search Paths` to "$(inherited) @executable_path/Frameworks"
 ![search path](ios_step_3.png "search path")
 
 ### Workaround for Android
