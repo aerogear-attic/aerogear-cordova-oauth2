@@ -52,7 +52,7 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
         scopes: 'https://www.googleapis.com/auth/drive'
       }
     });
-    
+
     oauth2.addKeycloak({
       name: 'keycloak',
       settings: {
@@ -61,7 +61,7 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
         realm: "shoot-realm"
       }
     });
-    
+
     oauth2.addFacebook({
       name: 'facebook',
       settings: {
@@ -69,7 +69,7 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
         clientSecret: '3b08052d3d96e2120f2c53a36eebd02f',
         scopes: 'photo_upload, publish_actions'
       }
-    });    
+    });
 
     oauth2.gplus.requestAccess()
       .then(function (token) {
@@ -111,10 +111,10 @@ open platforms/android/build.gradle and under the `android` section add:
   }
 
   dependencies {
-    compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0-alpha.1@aar'
-    compile 'org.jboss.aerogear:aerogear-android-core:2.0.0-alpha.1@aar'
-    compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0-alpha.1@aar'
-    compile 'org.jboss.aerogear:aerogear-android-store:2.0.0-alpha.1@aar'
+    compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0@aar'
+    compile 'org.jboss.aerogear:aerogear-android-core:2.0.0@aar'
+    compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0@aar'
+    compile 'org.jboss.aerogear:aerogear-android-store:2.0.0@aar'
     compile 'com.google.code.gson:gson:1.7.2'
     compile 'com.google.guava:guava:18.0'
   }

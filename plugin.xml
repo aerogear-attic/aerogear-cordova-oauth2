@@ -14,7 +14,7 @@
   </js-module>
 
   <dependency id="com.vladstirbu.cordova.promise" url="https://github.com/vstirbu/PromisesPlugin.git"/>
-  
+
   <platform name="android">
     <dependency id="org.jboss.aerogear.cordova.android.reflect" url="https://github.com/edewit/aerogear-reflect-cordova.git"/>
     <info>
@@ -25,10 +25,10 @@
       }
 
       dependencies {
-        compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0-alpha.1@aar'
-        compile 'org.jboss.aerogear:aerogear-android-core:2.0.0-alpha.1@aar'
-        compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0-alpha.1@aar'
-        compile 'org.jboss.aerogear:aerogear-android-store:2.0.0-alpha.1@aar'
+        compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0@aar'
+        compile 'org.jboss.aerogear:aerogear-android-core:2.0.0@aar'
+        compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0@aar'
+        compile 'org.jboss.aerogear:aerogear-android-store:2.0.0@aar'
         compile 'com.google.code.gson:gson:1.7.2'
         compile 'com.google.guava:guava:18.0'
       }
@@ -85,7 +85,7 @@
         </dict>
       </array>
     </config-file>
-    
+
     <source-file src="src/ios/http-0.2.0/AuthzModule.swift" />
     <source-file src="src/ios/http-0.2.0/Http.swift" />
     <source-file src="src/ios/http-0.2.0/HttpRequestSerializer.swift" />
@@ -127,12 +127,12 @@
         <Extensions>
           <Protocol Name="your.protocol" NavUriFragment="encodedLaunchUri=%s" TaskID="_default"/>
       </Extensions>
-    </config-file>    
+    </config-file>
     <source-file src="src/wp8/OAuth2Plugin.cs"/>
     <source-file src="src/wp8/OAuthUriMapper.cs"/>
     <source-file src="src/wp8/P.xaml"/>
     <source-file src="src/wp8/P.xaml.cs"/>
-    
+
     <source-file src="src/wp8/AccountManager.cs"/>
     <source-file src="src/wp8/AuthzModule.cs"/>
     <source-file src="src/wp8/AuthzWebRequest.cs"/>
