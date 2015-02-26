@@ -116,7 +116,6 @@ open platforms/android/build.gradle and under the `android` section add:
     compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0@aar'
     compile 'org.jboss.aerogear:aerogear-android-store:2.0.0@aar'
     compile 'com.google.code.gson:gson:1.7.2'
-    compile 'com.google.guava:guava:18.0'
   }
 
 ```
