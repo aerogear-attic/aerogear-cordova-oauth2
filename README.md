@@ -44,9 +44,9 @@ The available platform values are ios and android.
 
 ### Install the plugin
 
-Install the aerogear-oauth2-plugin plugin by executing:
+Install the aerogear-oauth2-cordova plugin by executing:
 
-	$ cordova plugin add https://github.com/edewit/aerogear-oauth2-plugin.git
+	$ cordova plugin add https://github.com/aerogear/aerogear-oauth2-cordova.git
 
 ### Sample example
 
