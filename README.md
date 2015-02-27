@@ -111,7 +111,7 @@ Our iOS version is using a Swift library. Cordova is not yet fully supporting Sw
 
 ### Workaround for Android
 
-Our native Android library that the cordova plugin uses only supports gradle, luckily there is a build.gradle in the generated project. Add the following to this file and use `gradle installDebug` to test
+Our native Android library that the cordova plugin uses only supports gradle, luckily there is a build.gradle in the generated project. Add the following to this file, then use gradle to build as in `ANDROID_BUILD=gradle cordova build android`.  Alternatively you can execute `gradle installDebug` from the platforms/android directory.
 
 open platforms/android/build.gradle and under the `android` section add:
 
