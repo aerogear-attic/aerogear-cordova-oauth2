@@ -17,6 +17,7 @@
 
   <platform name="android">
     <dependency id="org.jboss.aerogear.cordova.android.reflect" url="https://github.com/edewit/aerogear-reflect-cordova.git"/>
+        compile 'com.google.android.gms:play-services:4.0.30@aar'
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="OAuth2Plugin">
         <param name="android-package" value="org.jboss.aerogear.cordova.oauth2.OAuth2Plugin"/>
@@ -25,7 +26,11 @@
     <config-file target="AndroidManifest.xml" parent="/manifest/application">
       <service android:name="org.jboss.aerogear.android.authorization.oauth2.OAuth2AuthzService"/>
     </config-file>
+    <config-file target="AndroidManifest.xml" parent="/manifest/application">
+      <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+    </config-file>
     <source-file src="src/android/OAuth2Plugin.java" target-dir="src/org/jboss/aerogear/cordova/oauth2/"/>
+    <source-file src="src/android/OauthGoogleServicesIntentHelper.java" target-dir="src/org/jboss/aerogear/cordova/oauth2/"/>
     <resource-file src="src/android/res/layout/oauth_web_view.xml" target="res/layout/oauth_web_view.xml" />
     <resource-file src="src/android/res/values/styles.xml" target="res/values/styles.xml" />
     <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/AuthorizationConfiguration.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>

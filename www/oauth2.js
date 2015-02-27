@@ -174,4 +174,38 @@ OAuth2.prototype.requestAccess = function (accountId) {
   });
 }
 
+/**
+  Use Google Play Services to request an access token using one of the device's authorized accounts.
+
+  @param {String} scopes - comma separated list of "scopes" you want access to.  Defaults to the "https://www.googleapis.com/auth/plus.me" scope.
+  @returns {Object} The ES6 promise (accessToken as a response parameter; if an error is returned)
+  @example
+  oauth2.requestAccessUsingPlayServices('openid)
+     .then( function( accessToken ){
+        ...
+     })
+     .catch( function( error ) {
+        // an error happened
+     });
+   });
+ */
+OAuth2.prototype.requestAccessUsingPlayServices = function(scopes) {
+    var success, error;
+
+    return new Promise(function (resolve, reject) {
+        error = function (error) {
+            reject({
+                error: error
+            });
+        };
+
+        success = function (result) {
+            resolve(result);
+        };
+
+        var args = scopes ? [scopes] : [''];
+        cordova.exec(success, error, 'OAuth2Plugin', 'requestAccessUsingPlayServices', args);
+    });
+}
+
 module.exports = new OAuth2();
