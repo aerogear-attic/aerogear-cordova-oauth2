@@ -118,10 +118,10 @@ public class OAuth2Plugin extends BasePlugin {
     return true;
   }
 
-  public boolean requestAccessUsingPlayServices(String scopes, CallbackContext callbackContext) {
+  public boolean requestAccessUsingPlayServices(JSONObject data, CallbackContext callbackContext) throws JSONException {
     cordova.setActivityResultCallback(this);
     intentHelper = new OauthGoogleServicesIntentHelper(cordova, callbackContext);
-    intentHelper.triggerIntent(scopes);
+    intentHelper.triggerIntent(data);
     return true;
   }
 

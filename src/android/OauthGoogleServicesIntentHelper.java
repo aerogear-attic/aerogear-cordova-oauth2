@@ -23,9 +23,10 @@ import android.content.Intent;
 import android.util.Log;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.common.AccountPicker;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class OauthGoogleServicesIntentHelper {
   private static final String TAG = "OauthGoogleServices";
@@ -42,13 +43,17 @@ public class OauthGoogleServicesIntentHelper {
     this.callbackContext = callbackContext;
   }
 
-  public boolean triggerIntent(final String plainScopes) {
-    scopes = "oauth2:" + (plainScopes.isEmpty() ? PROFILE_SCOPE : plainScopes);
+  public boolean triggerIntent(final JSONObject data) throws JSONException {
+    scopes = "oauth2:" + ( data.has("scopes") ? data.getString("scopes") : PROFILE_SCOPE );
+
+    final String[] accountTypes = (data.has("accountTypes"))
+      ? data.getString("accountTypes").split("\\s")
+      : new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE};
+
     Runnable runnable = new Runnable() {
       public void run() {
         try {
-          Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                  new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
+          Intent intent = AccountManager.newChooseAccountIntent(null, null, accountTypes, false, null, null, null, null);
           cordova.getActivity().startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
         } catch (ActivityNotFoundException e) {
           Log.e(TAG, "Activity not found: " + e.toString());

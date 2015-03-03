@@ -177,10 +177,15 @@ OAuth2.prototype.requestAccess = function (accountId) {
 /**
   Use Google Play Services to request an access token using one of the device's authorized accounts.
 
-  @param {String} scopes - comma separated list of "scopes" you want access to.  Defaults to the "https://www.googleapis.com/auth/plus.me" scope.
+  @status Experimental
+  @param {String} settings.scopes - comma separated list of "scopes" you want access to.  Defaults to the "https://www.googleapis.com/auth/plus.me" scope.
+  @param {String} settings.accountTypes - space-separated list of account types used to filter the list of accounts. The access token will be requested for the account selected from this list. eg. "com.google"
   @returns {Object} The ES6 promise (accessToken as a response parameter; if an error is returned)
   @example
-  oauth2.requestAccessUsingPlayServices('openid)
+  oauth2.requestAccessUsingPlayServices({
+        scopes: 'openid',
+        accountTypes: 'com.google'
+     })
      .then( function( accessToken ){
         ...
      })
