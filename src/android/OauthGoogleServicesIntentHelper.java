@@ -133,8 +133,8 @@ public class OauthGoogleServicesIntentHelper {
       public void run() {
         String token;
         try {
-          Log.e(TAG, "Retrieving token for: " + accountName);
-          Log.e(TAG, "with scope(s): " + scopes);
+          Log.i(TAG, "Retrieving token for: " + accountName);
+          Log.i(TAG, "with scope(s): " + scopes);
           token = (String) METHOD_getToken.invoke(null, cordova.getActivity(), accountName, scopes);
           callbackContext.success(token);
         } catch (InvocationTargetException ite) {
