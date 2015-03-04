@@ -17,7 +17,6 @@
 
   <platform name="android">
     <dependency id="org.jboss.aerogear.cordova.android.reflect" url="https://github.com/edewit/aerogear-reflect-cordova.git"/>
-        compile 'com.google.android.gms:play-services:4.0.30@aar'
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="OAuth2Plugin">
         <param name="android-package" value="org.jboss.aerogear.cordova.oauth2.OAuth2Plugin"/>
