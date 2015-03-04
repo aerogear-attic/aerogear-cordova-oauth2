@@ -120,8 +120,12 @@ public class OAuth2Plugin extends BasePlugin {
 
   public boolean requestAccessUsingPlayServices(JSONObject data, CallbackContext callbackContext) throws JSONException {
     cordova.setActivityResultCallback(this);
-    intentHelper = new OauthGoogleServicesIntentHelper(cordova, callbackContext);
-    intentHelper.triggerIntent(data);
+    if (OauthGoogleServicesIntentHelper.available) {
+      intentHelper = new OauthGoogleServicesIntentHelper(cordova, callbackContext);
+      intentHelper.triggerIntent(data);
+    } else {
+      callbackContext.error("Google Play Services is not available");
+    }
     return true;
   }
 

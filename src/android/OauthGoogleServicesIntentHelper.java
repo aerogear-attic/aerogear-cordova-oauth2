@@ -19,14 +19,16 @@ package org.jboss.aerogear.cordova.oauth2;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.UserRecoverableAuthException;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class OauthGoogleServicesIntentHelper {
   private static final String TAG = "OauthGoogleServices";
@@ -37,6 +39,32 @@ public class OauthGoogleServicesIntentHelper {
   private String scopes;
   private CallbackContext callbackContext;
   public CordovaInterface cordova;
+  private static Class CLASS_GoogleAuthUtil;
+  private static Class CLASS_UserRecoverableAuthException;
+  private static Method METHOD_getToken;
+  private static Method METHOD_getIntent;
+  public static final boolean available;
+
+  static { // lazy initialization holder class idiom - a class will not be initialized until it is used [JLS, 12.4.1]
+    boolean _available;
+    try {
+      CLASS_GoogleAuthUtil = Class.forName("com.google.android.gms.auth.GoogleAuthUtil");
+      CLASS_UserRecoverableAuthException = Class.forName("com.google.android.gms.auth.UserRecoverableAuthException");
+      METHOD_getToken = CLASS_GoogleAuthUtil.getMethod("getToken", Context.class, String.class, String.class);
+      METHOD_getIntent = CLASS_UserRecoverableAuthException.getMethod("getIntent");
+      _available = true;
+    } catch (ClassNotFoundException e) {
+      _available = false;
+      Log.e(TAG, e.getMessage());
+      Log.e(TAG, "ClassNotFoundException, Google Play Services not available");
+    } catch (NoSuchMethodException e) {
+      _available = false;
+      Log.e(TAG, e.getMessage());
+      Log.e(TAG, "NoSuchMethodException, Google Play Services not available");
+    }
+    available = _available;
+    Log.i(TAG, "Google play services availability: " + available);
+  }
 
   public OauthGoogleServicesIntentHelper(CordovaInterface cordova, CallbackContext callbackContext) {
     this.cordova = cordova;
@@ -48,7 +76,7 @@ public class OauthGoogleServicesIntentHelper {
 
     final String[] accountTypes = (data.has("accountTypes"))
       ? data.getString("accountTypes").split("\\s")
-      : new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE};
+      : new String[]{"com.google"};
 
     Runnable runnable = new Runnable() {
       public void run() {
@@ -107,11 +135,23 @@ public class OauthGoogleServicesIntentHelper {
         try {
           Log.e(TAG, "Retrieving token for: " + accountName);
           Log.e(TAG, "with scope(s): " + scopes);
-          token = GoogleAuthUtil.getToken(cordova.getActivity(), accountName, scopes);
+          token = (String) METHOD_getToken.invoke(null, cordova.getActivity(), accountName, scopes);
           callbackContext.success(token);
-        } catch (UserRecoverableAuthException userRecoverableException) {
-          Log.e(TAG, "UserRecoverableAuthException: Attempting recovery...");
-          cordova.getActivity().startActivityForResult(userRecoverableException.getIntent(), REQUEST_AUTHORIZATION);
+        } catch (InvocationTargetException ite) {
+          Throwable userRecoverableException = ite.getCause();
+          if (CLASS_UserRecoverableAuthException != null && CLASS_UserRecoverableAuthException.isInstance(userRecoverableException)) {
+            try {
+              Intent intent = (Intent) METHOD_getIntent.invoke(userRecoverableException);
+              Log.e(TAG, "UserRecoverableAuthException: Attempting recovery...");
+              cordova.getActivity().startActivityForResult(intent, REQUEST_AUTHORIZATION);
+            } catch (IllegalAccessException e) {
+              Log.i(TAG, "error" + e.getMessage());
+              callbackContext.error("plugin failed to get token: " + e.getMessage());
+            } catch (InvocationTargetException e) {
+              Log.i(TAG, "error" + e.getCause().getMessage());
+              callbackContext.error("plugin failed to get token: " + e.getCause().getMessage());
+            }
+          }
         } catch (Exception e) {
           Log.i(TAG, "error" + e.getMessage());
           callbackContext.error("plugin failed to get token: " + e.getMessage());
