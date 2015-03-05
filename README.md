@@ -121,10 +121,10 @@ repositories {
 }
 
 dependencies {
-	compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0@aar'
-	compile 'org.jboss.aerogear:aerogear-android-core:2.0.0@aar'
-	compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0@aar'
-	compile 'org.jboss.aerogear:aerogear-android-store:2.0.0@aar'
+	compile 'org.jboss.aerogear:aerogear-android-core:2.0.0'
+	compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0'
+	compile 'org.jboss.aerogear:aerogear-android-store:2.0.0'
+	compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0'
 	compile 'com.google.code.gson:gson:1.7.2'
 }
 
