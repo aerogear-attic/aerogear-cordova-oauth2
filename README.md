@@ -50,7 +50,7 @@ Install the aerogear-oauth2-cordova plugin by executing:
 
 ### Sample example
 
-In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady` event is fired, add the foloowing snippet:
+In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady` event is fired, add the following snippet:
 
 ```javascript
   onDeviceReady: function () {
@@ -90,6 +90,24 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
         alert(err.error);
       });
   },
+```
+
+### Google Play Services
+On Android you can use Google Play Services to retrieve an Oauth2 token using on of the device's authorized accounts.
+To make the Google Play Services available to your application, be sure to add the `com.google.playservices` cordova plugin to your project.
+Then request an Oauth2 token using Google Play Services as in this example:
+```javascript
+   oauth2.requestAccessUsingPlayServices({
+        scopes: 'openid',
+        accountTypes: 'com.google'
+     })
+     .then( function( accessToken ){
+        ...
+     })
+     .catch( function( error ) {
+        // an error happened
+     });
+   });
 ```
 
 ### Facebook iOS
