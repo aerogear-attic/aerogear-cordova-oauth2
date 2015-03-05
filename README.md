@@ -144,10 +144,11 @@ and add minSdkVersion and targetSdkVersion to defaultConfig, so that it looks li
 ## Todo
 
 This is a very early version:
-- remove Swift hack on xcodeproject
-- remove Android hack on gradle
-- expose refreshToken, revokeToken
-- 
+
+* remove Swift hack on xcodeproject
+* remove Android hack on gradle
+* expose refreshToken, revokeToken
+
 ## Documentation
 
 For more details about the current release, please consult [our documentation](https://aerogear.org/docs/specs/aerogear-cordova/).
