@@ -116,38 +116,39 @@ Our native Android library that the cordova plugin uses only supports gradle, lu
 open platforms/android/build.gradle and under the `android` section add:
 
 ```
-  repositories {
-    mavenCentral()
-  }
+repositories {
+	mavenCentral()
+}
 
-  dependencies {
-    compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0@aar'
-    compile 'org.jboss.aerogear:aerogear-android-core:2.0.0@aar'
-    compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0@aar'
-    compile 'org.jboss.aerogear:aerogear-android-store:2.0.0@aar'
-    compile 'com.google.code.gson:gson:1.7.2'
-  }
+dependencies {
+	compile 'org.jboss.aerogear:aerogear-android-core:2.0.0'
+	compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0'
+	compile 'org.jboss.aerogear:aerogear-android-store:2.0.0'
+	compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0'
+	compile 'com.google.code.gson:gson:1.7.2'
+}
 
 ```
 
 and add minSdkVersion and targetSdkVersion to defaultConfig, so that it looks like this:
 
 ```
-  defaultConfig {
-    versionCode Integer.parseInt("" + getVersionCodeFromManifest() + "0")
-    minSdkVersion 16
-    targetSdkVersion 21
-  }
+defaultConfig {
+	versionCode Integer.parseInt("" + getVersionCodeFromManifest() + "0")
+	minSdkVersion 16
+	targetSdkVersion 21
+}
 
 ```
 
 ## Todo
 
 This is a very early version:
-- remove Swift hack on xcodeproject
-- remove Android hack on gradle
-- expose refreshToken, revokeToken
-- 
+
+* remove Swift hack on xcodeproject
+* remove Android hack on gradle
+* expose refreshToken, revokeToken
+
 ## Documentation
 
 For more details about the current release, please consult [our documentation](https://aerogear.org/docs/specs/aerogear-cordova/).
