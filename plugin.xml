@@ -25,9 +25,6 @@
     <config-file target="AndroidManifest.xml" parent="/manifest/application">
       <service android:name="org.jboss.aerogear.android.authorization.oauth2.OAuth2AuthzService"/>
     </config-file>
-    <config-file target="AndroidManifest.xml" parent="/manifest/application">
-      <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
-    </config-file>
     <source-file src="src/android/OAuth2Plugin.java" target-dir="src/org/jboss/aerogear/cordova/oauth2/"/>
     <source-file src="src/android/OauthGoogleServicesIntentHelper.java" target-dir="src/org/jboss/aerogear/cordova/oauth2/"/>
     <resource-file src="src/android/res/layout/oauth_web_view.xml" target="res/layout/oauth_web_view.xml" />
