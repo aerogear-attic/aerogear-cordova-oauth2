@@ -96,19 +96,6 @@ In `wwww/js/index.js` file, to start the OAuth2 dance as soon as `onDeviceReady`
 
 For our OAuth2 on iOS plugin we use external browser approach, in order to re-enter the app you need to provide a URI schema. This is called the ```redirect_uri```. By convention Google uses your iOS bundle. Facebook uses as ```redirect_uri``` 2 letters ```fb``` followed by the ```client_id```. As the ```client_id``` is not in your config.xml, once the project is deployed you will have to go to [project_name]-info.plist and modify it to change fbYYY where YYY is your facebook ```client_id```.
 
-### Workaround for iOS
-
-Our iOS version is using a Swift library. Cordova is not yet fully supporting Swift, when running cordova plugin add command, you will get an usefull information telling you to open xcode and do the followinf 3 tweaks:
-
-1. change `deployment target` to 7.0 or above
-![deployment target](ios_step_1.png "deployment target")
-
-2. add `[Project Name]/plugins/org.jboss.aerogear.cordova.oauth2/src/ios/Bridging-Header.h` to Objective-c Bridging Header under the Swift Compiler - Code Generation options
-![bridging header](ios_step_2.png "bridging header")
-
-3. set `Runpath Search Paths` to "$(inherited) @executable_path/Frameworks"
-![search path](ios_step_3.png "search path")
-
 ### Workaround for Android
 
 Our native Android library that the cordova plugin uses only supports gradle, luckily there is a build.gradle in the generated project. Add the following to this file, then use gradle to build as in `ANDROID_BUILD=gradle cordova build android`.  Alternatively you can execute `gradle installDebug` from the platforms/android directory.
@@ -144,10 +131,9 @@ and add minSdkVersion and targetSdkVersion to defaultConfig, so that it looks li
 ## Todo
 
 This is a very early version:
-- remove Swift hack on xcodeproject
 - remove Android hack on gradle
 - expose refreshToken, revokeToken
-- 
+
 ## Documentation
 
 For more details about the current release, please consult [our documentation](https://aerogear.org/docs/specs/aerogear-cordova/).

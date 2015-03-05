@@ -55,11 +55,7 @@
 
   <platform name="ios">
     <info>
-      open xcode go into settings change:
-      1. `deployment target` to 7.0 or above
-      2. add `[Project Name]/Plugins/org.jboss.aerogear.cordova.oauth2/Bridging-Header.h` to Objective-c Bridging Header
-          under the Swift Compiler - Code Generation options
-      3. set LD_RUNPATH_SEARCH_PATHS to "$(inherited) @executable_path/Frameworks"
+      use `cordova build ios --device` to build
     </info>
     <config-file target="config.xml" parent="/*">
       <feature name="OAuth2Plugin">
@@ -84,6 +80,7 @@
         </dict>
       </array>
     </config-file>
+    <hook type="after_plugin_install" src="hooks/addSwiftOptions.js" />
 
     <source-file src="src/ios/http-0.2.0/AuthzModule.swift" />
     <source-file src="src/ios/http-0.2.0/Http.swift" />
