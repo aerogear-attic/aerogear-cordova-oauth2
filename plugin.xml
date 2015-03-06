@@ -17,31 +17,7 @@
 
   <platform name="android">
     <dependency id="org.jboss.aerogear.cordova.android.reflect" url="https://github.com/edewit/aerogear-reflect-cordova.git"/>
-    <info>
-      open platforms/android/build.gradle and under the `android` section add:
-
-      repositories {
-        mavenCentral()
-      }
-
-      dependencies {
-        compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0@aar'
-        compile 'org.jboss.aerogear:aerogear-android-core:2.0.0@aar'
-        compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0@aar'
-        compile 'org.jboss.aerogear:aerogear-android-store:2.0.0@aar'
-        compile 'com.google.code.gson:gson:1.7.2'
-      }
-
-      and add minSdkVersion and targetSdkVersion to defaultConfig, like this:
-
-      defaultConfig {
-        versionCode Integer.parseInt("" + getVersionCodeFromManifest() + "0")
-        minSdkVersion 16
-        targetSdkVersion 21
-      }
-
-      you can not use `cordova build` but have to execute `gradle installDebug` from the platforms/android directory
-    </info>
+    <dependency id="org.jboss.aerogear.android.authz" url="https://github.com/bleathem/aerogear-authz-cordova.git"/>
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="OAuth2Plugin">
         <param name="android-package" value="org.jboss.aerogear.cordova.oauth2.OAuth2Plugin"/>
