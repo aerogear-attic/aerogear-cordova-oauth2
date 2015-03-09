@@ -128,6 +128,10 @@ and add minSdkVersion and targetSdkVersion to defaultConfig, so that it looks li
 
 ```
 
+## Xcode
+
+When you need / want to build the project with Xcode you'll need to make [some changes to the project](xcode.md)
+
 ## Todo
 
 This is a very early version:
