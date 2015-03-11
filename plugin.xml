@@ -17,31 +17,6 @@
 
   <platform name="android">
     <dependency id="org.jboss.aerogear.cordova.android.reflect" url="https://github.com/edewit/aerogear-reflect-cordova.git"/>
-    <info>
-      open platforms/android/build.gradle and under the `android` section add:
-
-      repositories {
-        mavenCentral()
-      }
-
-      dependencies {
-        compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0@aar'
-        compile 'org.jboss.aerogear:aerogear-android-core:2.0.0@aar'
-        compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0@aar'
-        compile 'org.jboss.aerogear:aerogear-android-store:2.0.0@aar'
-        compile 'com.google.code.gson:gson:1.7.2'
-      }
-
-      and add minSdkVersion and targetSdkVersion to defaultConfig, like this:
-
-      defaultConfig {
-        versionCode Integer.parseInt("" + getVersionCodeFromManifest() + "0")
-        minSdkVersion 16
-        targetSdkVersion 21
-      }
-
-      you can not use `cordova build` but have to execute `gradle installDebug` from the platforms/android directory
-    </info>
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="OAuth2Plugin">
         <param name="android-package" value="org.jboss.aerogear.cordova.oauth2.OAuth2Plugin"/>
@@ -51,6 +26,27 @@
       <service android:name="org.jboss.aerogear.android.authorization.oauth2.OAuth2AuthzService"/>
     </config-file>
     <source-file src="src/android/OAuth2Plugin.java" target-dir="src/org/jboss/aerogear/cordova/oauth2/"/>
+    <resource-file src="src/android/res/layout/oauth_web_view.xml" target="res/layout/oauth_web_view.xml" />
+    <resource-file src="src/android/res/values/styles.xml" target="res/values/styles.xml" />
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/AuthorizationConfiguration.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/AuthorizationManager.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/AuthzModule.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/FakeR.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/OAuth2AuthorizationConfiguration.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/OAuth2AuthorizationException.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/OAuth2AuthroizationConfigurationProvider.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/OAuth2AuthzModule.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/OAuth2AuthzService.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/OAuth2AuthzSession.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/OAuth2FetchAccess.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/OAuth2Properties.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/OAuth2WebFragmentFetchAutorization.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/oauth2/OAuthWebViewDialog.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/OnAuthorizationCreatedListener.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>
+    <source-file src="src/android/libs/aerogear-android-core-2.0.0.jar" target-dir="libs" />
+    <source-file src="src/android/libs/aerogear-android-store-2.0.0.jar" target-dir="libs" />
+    <source-file src="src/android/libs/aerogear-android-pipe-2.0.0.jar" target-dir="libs" />
+    <source-file src="src/android/libs/gson-2.2.2.jar" target-dir="libs" />    
   </platform>
 
   <platform name="ios">
