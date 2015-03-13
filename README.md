@@ -121,7 +121,6 @@ When you need / want to build the project with Xcode you'll need to make [some c
 ## Todo
 
 This is a very early version:
-- remove Android hack on gradle
 - expose refreshToken, revokeToken
 
 ## Documentation
