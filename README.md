@@ -114,38 +114,6 @@ Then request an Oauth2 token using Google Play Services as in this example:
 
 For our OAuth2 on iOS plugin we use external browser approach, in order to re-enter the app you need to provide a URI schema. This is called the ```redirect_uri```. By convention Google uses your iOS bundle. Facebook uses as ```redirect_uri``` 2 letters ```fb``` followed by the ```client_id```. As the ```client_id``` is not in your config.xml, once the project is deployed you will have to go to [project_name]-info.plist and modify it to change fbYYY where YYY is your facebook ```client_id```.
 
-### Workaround for Android
-
-Our native Android library that the cordova plugin uses only supports gradle, luckily there is a build.gradle in the generated project. Add the following to this file, then use gradle to build as in `ANDROID_BUILD=gradle cordova build android`.  Alternatively you can execute `gradle installDebug` from the platforms/android directory.
-
-open platforms/android/build.gradle and under the `android` section add:
-
-```
-  repositories {
-    mavenCentral()
-  }
-
-  dependencies {
-    compile 'org.jboss.aerogear:aerogear-android-authz:2.0.0@aar'
-    compile 'org.jboss.aerogear:aerogear-android-core:2.0.0@aar'
-    compile 'org.jboss.aerogear:aerogear-android-pipe:2.0.0@aar'
-    compile 'org.jboss.aerogear:aerogear-android-store:2.0.0@aar'
-    compile 'com.google.code.gson:gson:1.7.2'
-  }
-
-```
-
-and add minSdkVersion and targetSdkVersion to defaultConfig, so that it looks like this:
-
-```
-  defaultConfig {
-    versionCode Integer.parseInt("" + getVersionCodeFromManifest() + "0")
-    minSdkVersion 16
-    targetSdkVersion 21
-  }
-
-```
-
 ## Xcode
 
 When you need / want to build the project with Xcode you'll need to make [some changes to the project](xcode.md)
