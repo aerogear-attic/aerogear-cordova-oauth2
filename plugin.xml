@@ -26,6 +26,7 @@
       <service android:name="org.jboss.aerogear.android.authorization.oauth2.OAuth2AuthzService"/>
     </config-file>
     <source-file src="src/android/OAuth2Plugin.java" target-dir="src/org/jboss/aerogear/cordova/oauth2/"/>
+    <source-file src="src/android/OauthGoogleServicesIntentHelper.java" target-dir="src/org/jboss/aerogear/cordova/oauth2/"/>
     <resource-file src="src/android/res/layout/oauth_web_view.xml" target="res/layout/oauth_web_view.xml" />
     <resource-file src="src/android/res/values/styles.xml" target="res/values/styles.xml" />
     <source-file src="src/android/libs/src/org/jboss/aerogear/android/authorization/AuthorizationConfiguration.java" target-dir="src/org/jboss/aerogear/android/authorization/"/>

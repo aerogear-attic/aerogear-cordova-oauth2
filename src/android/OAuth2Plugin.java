@@ -16,6 +16,7 @@
  */
 package org.jboss.aerogear.cordova.oauth2;
 
+import android.content.Intent;
 import android.util.Log;
 import org.apache.cordova.CallbackContext;
 import org.jboss.aerogear.android.core.Callback;
@@ -35,6 +36,7 @@ import java.util.Arrays;
  */
 public class OAuth2Plugin extends BasePlugin {
   private static final String TAG = OAuth2Plugin.class.getSimpleName();
+  private OauthGoogleServicesIntentHelper intentHelper;
 
   public boolean add(JSONObject data, CallbackContext callbackContext) throws JSONException, MalformedURLException {
     Log.d(TAG, "add account");
@@ -114,5 +116,24 @@ public class OAuth2Plugin extends BasePlugin {
       }
     });
     return true;
+  }
+
+  public boolean requestAccessUsingPlayServices(JSONObject data, CallbackContext callbackContext) throws JSONException {
+    cordova.setActivityResultCallback(this);
+    if (OauthGoogleServicesIntentHelper.available) {
+      intentHelper = new OauthGoogleServicesIntentHelper(cordova, callbackContext);
+      intentHelper.triggerIntent(data);
+    } else {
+      callbackContext.error("Google Play Services is not available");
+    }
+    return true;
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+    if (intentHelper != null) {
+      intentHelper.onActivityResult(requestCode, resultCode, data);
+    }
+    super.onActivityResult(requestCode, resultCode, data);
   }
 }
