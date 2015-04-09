@@ -118,7 +118,7 @@
     </config-file>
     <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App" after="Tokens">
         <Extensions>
-          <Protocol Name="your.protocol" NavUriFragment="encodedLaunchUri=%s" TaskID="_default"/>
+          <Protocol Name="$PACKAGE_NAME" NavUriFragment="encodedLaunchUri=%s" TaskID="_default"/>
       </Extensions>
     </config-file>
     <source-file src="src/wp8/OAuth2Plugin.cs"/>
