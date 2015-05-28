@@ -3,9 +3,10 @@
 
   <name>OAuth2</name>
   <keywords>cordova,aerogear,oath2,google,keycloak,facebook</keywords>
-  
+
   <engines>
     <engine name="cordova" version=">=3.4.0" />
+    <engine name="cordova-android" version=">=3.7.2" />
   </engines>
 
   <asset src="www/oauth2.js" target="js/oauth2.js" />
@@ -48,7 +49,7 @@
     <source-file src="src/android/libs/aerogear-android-core-2.0.0.jar" target-dir="libs" />
     <source-file src="src/android/libs/aerogear-android-store-2.0.0.jar" target-dir="libs" />
     <source-file src="src/android/libs/aerogear-android-pipe-2.0.0.jar" target-dir="libs" />
-    <source-file src="src/android/libs/gson-2.2.2.jar" target-dir="libs" />    
+    <source-file src="src/android/libs/gson-2.2.2.jar" target-dir="libs" />
   </platform>
 
   <platform name="ios">
