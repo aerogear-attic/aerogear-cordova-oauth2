@@ -15,7 +15,7 @@
     <clobbers target="oauth2" />
   </js-module>
 
-  <dependency id="com.vladstirbu.cordova.promise" url="https://github.com/vstirbu/PromisesPlugin.git"/>
+  <dependency id="es6-promise-plugin" url="https://github.com/vstirbu/PromisesPlugin.git"/>
 
   <platform name="android">
     <dependency id="org.jboss.aerogear.cordova.android.reflect" url="https://github.com/edewit/aerogear-reflect-cordova.git"/>
