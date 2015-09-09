@@ -46,7 +46,7 @@ The available platform values are ios and android.
 
 Install the aerogear-oauth2-cordova plugin by executing:
 
-	$ cordova plugin add org.jboss.aerogear.cordova.oauth2
+	$ cordova plugin add aerogear-cordova-oauth2
 
 ### Sample example
 
