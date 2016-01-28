@@ -56,14 +56,14 @@ public class UntrustedMemoryOAuth2Session: OAuth2Session {
     Check validity of accessToken. return true if still valid, false when expired.
     */
     public func tokenIsNotExpired() -> Bool {
-        return self.accessTokenExpirationDate?.timeIntervalSinceDate(NSDate()) > 0
+        return self.accessTokenExpirationDate != nil ? (self.accessTokenExpirationDate!.timeIntervalSinceDate(NSDate()) > 0) : true
     }
     
     /**
     Check validity of refreshToken. return true if still valid, false when expired.
     */
     public func refreshTokenIsNotExpired() -> Bool {
-        return self.refreshTokenExpirationDate?.timeIntervalSinceDate(NSDate()) > 0
+        return self.refreshTokenExpirationDate != nil ? (self.refreshTokenExpirationDate!.timeIntervalSinceDate(NSDate()) > 0) : true
     }
     
     /**
@@ -94,11 +94,11 @@ public class UntrustedMemoryOAuth2Session: OAuth2Session {
     /**
     Initialize session using account id. 
     
-    :param: accountId uniqueId to identify the oauth2module
-    :param: accessToken optional parameter to initilaize the storage with initial values
-    :param: accessTokenExpirationDate optional parameter to initilaize the storage with initial values
-    :param: refreshToken optional parameter to initilaize the storage with initial values
-    :param: refreshTokenExpirationDate optional parameter to initilaize the storage with initial values
+    :param: accountId uniqueId to identify the oauth2module.
+    :param: accessToken optional parameter to initilaize the storage with initial values.
+    :param: accessTokenExpirationDate optional parameter to initilaize the storage with initial values.
+    :param: refreshToken optional parameter to initilaize the storage with initial values.
+    :param: refreshTokenExpirationDate optional parameter to initilaize the storage with initial values.
     */
     public init(accountId: String, accessToken: String? = nil, accessTokenExpirationDate: NSDate? = nil, refreshToken: String? = nil, refreshTokenExpirationDate: NSDate? = nil) {
         self.accessToken = accessToken

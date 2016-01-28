@@ -21,19 +21,33 @@ import Foundation
 A request serializer to JSON objects/
 */
 public class JsonRequestSerializer:  HttpRequestSerializer {
+    /**
+    Build an request using the specified params passed in.
     
+    :param: url the url of the resource.
+    :param: method the method to be used.
+    :param: parameters the request parameters.
+    :param: headers any headers to be used on this request.
+    
+    :returns: the URLRequest object.
+    */
     public override func request(url: NSURL, method: HttpMethod, parameters: [String: AnyObject]?, headers: [String: String]? = nil) -> NSURLRequest {
         if method == HttpMethod.GET || method == HttpMethod.HEAD || method == HttpMethod.DELETE {
             return super.request(url, method: method, parameters: parameters, headers: headers)
         } else {
-            var request = NSMutableURLRequest(URL: url, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
+            let request = NSMutableURLRequest(URL: url, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
             request.HTTPMethod = method.rawValue
 
             // set type
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             // set body
             if (parameters != nil) {
-                var body =  NSJSONSerialization.dataWithJSONObject(parameters!, options: nil, error: nil)
+                var body: NSData?
+                do {
+                    body = try NSJSONSerialization.dataWithJSONObject(parameters!, options: [])
+                } catch _ {
+                    body = nil
+                }
                 // set body
                 if (body != nil) {
                     request.setValue("\(body?.length)", forHTTPHeaderField: "Content-Length")
