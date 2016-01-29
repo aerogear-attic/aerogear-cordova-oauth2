@@ -61,27 +61,28 @@
     </config-file>
     <hook type="after_plugin_install" src="hooks/addSwiftOptions.js" />
 
-    <source-file src="src/ios/http-0.2.0/AuthzModule.swift" />
-    <source-file src="src/ios/http-0.2.0/Http.swift" />
-    <source-file src="src/ios/http-0.2.0/HttpRequestSerializer.swift" />
-    <source-file src="src/ios/http-0.2.0/JsonRequestSerializer.swift" />
-    <source-file src="src/ios/http-0.2.0/JsonResponseSerializer.swift" />
-    <source-file src="src/ios/http-0.2.0/MultiPartData.swift" />
-    <source-file src="src/ios/http-0.2.0/RequestSerializer.swift" />
-    <source-file src="src/ios/http-0.2.0/ResponseSerializer.swift" />
-    <source-file src="src/ios/http-0.2.0/StringResponseSerializer.swift" />
-    <source-file src="src/ios/http-0.2.0/Utils.swift" />
+    <source-file src="src/ios/http-0.4.1/AuthzModule.swift" />
+    <source-file src="src/ios/http-0.4.1/Http.swift" />
+    <source-file src="src/ios/http-0.4.1/HttpRequestSerializer.swift" />
+    <source-file src="src/ios/http-0.4.1/JsonRequestSerializer.swift" />
+    <source-file src="src/ios/http-0.4.1/JsonResponseSerializer.swift" />
+    <source-file src="src/ios/http-0.4.1/MultiPartData.swift" />
+    <source-file src="src/ios/http-0.4.1/RequestSerializer.swift" />
+    <source-file src="src/ios/http-0.4.1/ResponseSerializer.swift" />
+    <source-file src="src/ios/http-0.4.1/StringResponseSerializer.swift" />
+    <source-file src="src/ios/http-0.4.1/Utils.swift" />
 
-    <source-file src="src/ios/oauth-0.2.0/AccountManager.swift" />
-    <source-file src="src/ios/oauth-0.2.0/Config.swift" />
-    <source-file src="src/ios/oauth-0.2.0/DateUtils.swift" />
-    <source-file src="src/ios/oauth-0.2.0/FacebookOAuth2Module.swift" />
-    <source-file src="src/ios/oauth-0.2.0/KeycloakOAuth2Module.swift" />
-    <source-file src="src/ios/oauth-0.2.0/OAuth2Module.swift" />
-    <source-file src="src/ios/oauth-0.2.0/OAuth2Session.swift" />
-    <source-file src="src/ios/oauth-0.2.0/OpenIDClaim.swift" />
-    <source-file src="src/ios/oauth-0.2.0/TrustedPersistantOAuth2Session.swift" />
-    <source-file src="src/ios/oauth-0.2.0/UntrustedMemoryOAuth2Session.swift" />
+    <source-file src="src/ios/oauth-0.4.0/AccountManager.swift" />
+    <source-file src="src/ios/oauth-0.4.0/Config.swift" />
+    <source-file src="src/ios/oauth-0.4.0/DateUtils.swift" />
+    <source-file src="src/ios/oauth-0.4.0/FacebookOAuth2Module.swift" />
+    <source-file src="src/ios/oauth-0.4.0/KeycloakOAuth2Module.swift" />
+    <source-file src="src/ios/oauth-0.4.0/OAuth2Module.swift" />
+    <source-file src="src/ios/oauth-0.4.0/OAuth2Session.swift" />
+    <source-file src="src/ios/oauth-0.4.0/OAuth2WebViewController.swift" />
+    <source-file src="src/ios/oauth-0.4.0/OpenIDClaim.swift" />
+    <source-file src="src/ios/oauth-0.4.0/TrustedPersistantOAuth2Session.swift" />
+    <source-file src="src/ios/oauth-0.4.0/UntrustedMemoryOAuth2Session.swift" />
 
     <source-file src="src/ios/Bridging-Header.h" />
     <source-file src="src/ios/OAuth2Plugin.swift" />

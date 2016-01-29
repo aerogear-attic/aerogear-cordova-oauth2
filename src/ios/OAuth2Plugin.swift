@@ -3,7 +3,7 @@ import Foundation
  @objc(OAuth2Plugin) class OAuth2Plugin : CDVPlugin {
     
     func add(command: CDVInvokedUrlCommand) {
-        let args = command.arguments[0] as [String: String]
+        let args = command.arguments[0] as! [String: String]
         
         var scopes: [String] = []
         if args["scopes"] != nil {
@@ -25,7 +25,7 @@ import Foundation
     }
     
     func addGoogle(command: CDVInvokedUrlCommand) {
-        let args = command.arguments[0] as [String: String]
+        let args = command.arguments[0] as! [String: String]
         
         var scopes: [String] = []
         if args["scopes"] != nil {
@@ -41,7 +41,7 @@ import Foundation
     }
     
     func addKeycloak(command: CDVInvokedUrlCommand) {
-        let args = command.arguments[0] as [String: String]
+        let args = command.arguments[0] as! [String: String]
         let keycloakConfig = KeycloakConfig(
             clientId: args["clientId"]!,
             host: args["base"]!.stringByReplacingOccurrencesOfString("/auth", withString: ""),
@@ -53,7 +53,7 @@ import Foundation
     }
 
     func addFacebook(command: CDVInvokedUrlCommand) {
-        let args = command.arguments[0] as [String: String]
+        let args = command.arguments[0] as! [String: String]
         
         var scopes: [String] = []
         if args["scopes"] != nil {
@@ -71,19 +71,19 @@ import Foundation
     }
     
     func requestAccess(command: CDVInvokedUrlCommand) {
-        let accountId = command.arguments[0] as String
+        let accountId = command.arguments[0] as! String
         let module = AccountManager.getAccountByName(accountId)
 
-        commandDelegate.runInBackground { () -> Void  in
+        commandDelegate?.runInBackground { () -> Void  in
             if let module = module {
                 module.requestAccess({ (accessToken, error ) in
                     var commandResult:CDVPluginResult
                     if let error = error {
                         commandResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAsString: error.description)
                     } else {
-                        commandResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: accessToken as String)
+                        commandResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: accessToken as! String)
                     }
-                    self.commandDelegate.sendPluginResult(commandResult, callbackId: command.callbackId)
+                    self.commandDelegate?.sendPluginResult(commandResult, callbackId: command.callbackId)
                 })
             }
         }

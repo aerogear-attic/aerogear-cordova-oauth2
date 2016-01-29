@@ -26,6 +26,12 @@ public class FacebookOAuth2Module: OAuth2Module {
         super.init(config: config, session: session, requestSerializer: JsonRequestSerializer(), responseSerializer: StringResponseSerializer())
     }
     
+    /**
+    Exchange an authorization code for an access token.
+    
+    :param: code the 'authorization' code to exchange for an access token.
+    :param: completionHandler A block object to be executed when the request operation finishes.
+    */
     override public func exchangeAuthorizationCodeForAccessToken(code: String, completionHandler: (AnyObject?, NSError?) -> Void) {
         var paramDict: [String: String] = ["code": code, "client_id": config.clientId, "redirect_uri": config.redirectURL, "grant_type":"authorization_code"]
         
@@ -44,15 +50,15 @@ public class FacebookOAuth2Module: OAuth2Module {
                 var accessToken: String? = nil
                 var expiredIn: String? = nil
                 
-                var charSet: NSMutableCharacterSet = NSMutableCharacterSet()
+                let charSet: NSMutableCharacterSet = NSMutableCharacterSet()
                 charSet.addCharactersInString("&=")
                 let array = unwrappedResponse.componentsSeparatedByCharactersInSet(charSet)
-                for (index, elt) in enumerate(array) {
+                for (index, elt) in array.enumerate() {
                     if elt == "access_token" {
                         accessToken = array[index+1]
                     }
                 }
-                for (index, elt) in enumerate(array) {
+                for (index, elt) in array.enumerate() {
                     if elt == "expires" {
                         expiredIn = array[index+1]
                     }
@@ -63,6 +69,11 @@ public class FacebookOAuth2Module: OAuth2Module {
         })
     }
     
+    /**
+    Request to revoke access.
+    
+    :param: completionHandler A block object to be executed when the request operation finishes.
+    */
     override public func revokeAccess(completionHandler: (AnyObject?, NSError?) -> Void) {
         // return if not yet initialized
         if (self.oauth2Session.accessToken == nil) {
@@ -95,7 +106,7 @@ public class FacebookOAuth2Module: OAuth2Module {
             }
             var paramDict: [String: String] = [:]
             if response != nil {
-                paramDict = ["access_token": response! as String]
+                paramDict = ["access_token": response! as! String]
             }
             if let userInfoEndpoint = self.config.userInfoEndpoint {
                 
@@ -105,8 +116,8 @@ public class FacebookOAuth2Module: OAuth2Module {
                         return
                     }
                     if let unwrappedResponse = responseObject as? String {
-                        var data = unwrappedResponse.dataUsingEncoding(NSUTF8StringEncoding)
-                        var json: AnyObject? = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions(0), error: nil)
+                        let data = unwrappedResponse.dataUsingEncoding(NSUTF8StringEncoding)
+                        let json: AnyObject? = try! NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions(rawValue: 0))
                         var openIDClaims: FacebookOpenIDClaim?
                         if let unwrappedResponse = json as? [String: AnyObject] {
                             openIDClaims = FacebookOpenIDClaim(fromDict: unwrappedResponse)

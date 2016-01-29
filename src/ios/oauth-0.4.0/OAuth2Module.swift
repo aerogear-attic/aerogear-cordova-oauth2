@@ -19,18 +19,18 @@ import Foundation
 import UIKit
 
 /**
-Notification constants emitted during oauth authorization flow
+Notification constants emitted during oauth authorization flow.
 */
 public let AGAppLaunchedWithURLNotification = "AGAppLaunchedWithURLNotification"
 public let AGAppDidBecomeActiveNotification = "AGAppDidBecomeActiveNotification"
 public let AGAuthzErrorDomain = "AGAuthzErrorDomain"
 
 /**
-The current state that this module is in
+The current state that this module is in.
 
-- AuthorizationStatePendingExternalApproval:  the module is waiting external approval
-- AuthorizationStateApproved:                the oauth flow has been approved
-- AuthorizationStateUnknown:                the oauth flow is in unknown state (e.g. user clicked cancel)
+- AuthorizationStatePendingExternalApproval: the module is waiting external approval.
+- AuthorizationStateApproved: the oauth flow has been approved.
+- AuthorizationStateUnknown: the oauth flow is in unknown state (e.g. user clicked cancel).
 */
 enum AuthorizationState {
     case AuthorizationStatePendingExternalApproval
@@ -39,7 +39,7 @@ enum AuthorizationState {
 }
 
 /**
-Parent class of any OAuth2 module implementing generic OAuth2 authorization flow
+Parent class of any OAuth2 module implementing generic OAuth2 authorization flow.
 */
 public class OAuth2Module: AuthzModule {
     let config: Config
@@ -49,16 +49,16 @@ public class OAuth2Module: AuthzModule {
     var applicationLaunchNotificationObserver: NSObjectProtocol?
     var applicationDidBecomeActiveNotificationObserver: NSObjectProtocol?
     var state: AuthorizationState
-
+    var webView: OAuth2WebViewController?
     /**
-    Initialize an OAuth2 module
+    Initialize an OAuth2 module.
 
-    :param: config                   the configuration object that setups the module
-    :param: session                 the session that that module will be bound to
-    :param: requestSerializer   the actual request serializer to use when performing requests
-    :param: responseSerializer the actual response serializer to use upon receiving a response
+    :param: config the configuration object that setups the module.
+    :param: session the session that that module will be bound to.
+    :param: requestSerializer the actual request serializer to use when performing requests.
+    :param: responseSerializer the actual response serializer to use upon receiving a response.
 
-    :returns: the newly initialized OAuth2Module
+    :returns: the newly initialized OAuth2Module.
     */
     public required init(config: Config, session: OAuth2Session? = nil, requestSerializer: RequestSerializer = HttpRequestSerializer(), responseSerializer: ResponseSerializer = JsonResponseSerializer()) {
         if (config.accountId == nil) {
@@ -71,7 +71,9 @@ public class OAuth2Module: AuthzModule {
         }
 
         self.config = config
-        // TODO use timeout config paramter
+        if config.isWebView {
+            self.webView = OAuth2WebViewController()
+        }
         self.http = Http(baseURL: config.baseURL, requestSerializer: requestSerializer, responseSerializer:  responseSerializer)
         self.state = .AuthorizationStateUnknown
     }
@@ -79,7 +81,7 @@ public class OAuth2Module: AuthzModule {
     // MARK: Public API - To be overriden if necessary by OAuth2 specific adapter
 
     /**
-    Request an authorization code
+    Request an authorization code.
 
     :param: completionHandler A block object to be executed when the request operation finishes.
     */
@@ -89,6 +91,9 @@ public class OAuth2Module: AuthzModule {
         // from the server.
         applicationLaunchNotificationObserver = NSNotificationCenter.defaultCenter().addObserverForName(AGAppLaunchedWithURLNotification, object: nil, queue: nil, usingBlock: { (notification: NSNotification!) -> Void in
             self.extractCode(notification, completionHandler: completionHandler)
+            if ( self.webView != nil ) {
+                UIApplication.sharedApplication().keyWindow?.rootViewController?.dismissViewControllerAnimated(true, completion: nil)
+            }
         })
 
         // register to receive notification when the application becomes active so we
@@ -109,12 +114,20 @@ public class OAuth2Module: AuthzModule {
         self.state = .AuthorizationStatePendingExternalApproval
 
         // calculate final url
-        var params = "?scope=\(config.scope)&redirect_uri=\(config.redirectURL.urlEncode())&client_id=\(config.clientId)&response_type=code"
-        UIApplication.sharedApplication().openURL(NSURL(string: http.calculateURL(config.baseURL, url:config.authzEndpoint).absoluteString! + params)!)
+        let params = "?scope=\(config.scope)&redirect_uri=\(config.redirectURL.urlEncode())&client_id=\(config.clientId)&response_type=code"
+        let url = NSURL(string:http.calculateURL(config.baseURL, url:config.authzEndpoint).absoluteString + params)
+        if let url = url {
+            if self.webView != nil {
+                self.webView!.targetURL = url
+                UIApplication.sharedApplication().keyWindow?.rootViewController?.presentViewController(self.webView!, animated: true, completion: nil)
+            } else {
+                UIApplication.sharedApplication().openURL(url)
+            }
+        }
     }
 
     /**
-    Request to refresh an access token
+    Request to refresh an access token.
 
     :param: completionHandler A block object to be executed when the request operation finishes.
     */
@@ -132,8 +145,8 @@ public class OAuth2Module: AuthzModule {
                 }
 
                 if let unwrappedResponse = response as? [String: AnyObject] {
-                    let accessToken: String = unwrappedResponse["access_token"] as NSString
-                    let expiration = unwrappedResponse["expires_in"] as NSNumber
+                    let accessToken: String = unwrappedResponse["access_token"] as! String
+                    let expiration = unwrappedResponse["expires_in"] as! NSNumber
                     let exp: String = expiration.stringValue
                     
                     self.oauth2Session.saveAccessToken(accessToken, refreshToken: unwrappedRefreshToken, accessTokenExpiration: exp, refreshTokenExpiration: nil)
@@ -145,38 +158,41 @@ public class OAuth2Module: AuthzModule {
     }
 
     /**
-    Exchange an authorization code for an access token
+    Exchange an authorization code for an access token.
 
-    :param: code              the 'authorization' code to exchange for an access token
+    :param: code the 'authorization' code to exchange for an access token.
     :param: completionHandler A block object to be executed when the request operation finishes.
     */
     public func exchangeAuthorizationCodeForAccessToken(code: String, completionHandler: (AnyObject?, NSError?) -> Void) {
         var paramDict: [String: String] = ["code": code, "client_id": config.clientId, "redirect_uri": config.redirectURL, "grant_type":"authorization_code"]
-
+        
         if let unwrapped = config.clientSecret {
             paramDict["client_secret"] = unwrapped
         }
-
+        
         http.POST(config.accessTokenEndpoint, parameters: paramDict, completionHandler: {(responseObject, error) in
             if (error != nil) {
                 completionHandler(nil, error)
                 return
             }
-
+            
             if let unwrappedResponse = responseObject as? [String: AnyObject] {
-                let accessToken: String = unwrappedResponse["access_token"] as NSString
-                let refreshToken: String = unwrappedResponse["refresh_token"] as NSString
-                let expiration = unwrappedResponse["expires_in"] as NSNumber
-                let exp: String = expiration.stringValue
+                let accessToken: String = unwrappedResponse["access_token"] as! String
+                let refreshToken: String? = unwrappedResponse["refresh_token"] as? String
+                let expiration = unwrappedResponse["expires_in"] as? NSNumber
+                let exp: String? = expiration?.stringValue
+                // expiration for refresh token is used in Keycloak
+                let expirationRefresh = unwrappedResponse["refresh_expires_in"] as? NSNumber
+                let expRefresh = expirationRefresh?.stringValue
                 
-                self.oauth2Session.saveAccessToken(accessToken, refreshToken: refreshToken, accessTokenExpiration: exp, refreshTokenExpiration: nil)
+                self.oauth2Session.saveAccessToken(accessToken, refreshToken: refreshToken, accessTokenExpiration: exp, refreshTokenExpiration: expRefresh)
                 completionHandler(accessToken, nil)
             }
         })
     }
 
     /**
-    Gateway to request authorization access
+    Gateway to request authorization access.
 
     :param: completionHandler A block object to be executed when the request operation finishes.
     */
@@ -194,7 +210,7 @@ public class OAuth2Module: AuthzModule {
     }
     
     /**
-    Gateway to provide authentication using the Authorization Code Flow with OpenID Connect
+    Gateway to provide authentication using the Authorization Code Flow with OpenID Connect.
     
     :param: completionHandler A block object to be executed when the request operation finishes.
     */
@@ -208,7 +224,7 @@ public class OAuth2Module: AuthzModule {
             }
             var paramDict: [String: String] = [:]
             if response != nil {
-                paramDict = ["access_token": response! as String]
+                paramDict = ["access_token": response! as! String]
             }
             if let userInfoEndpoint = self.config.userInfoEndpoint {
 
@@ -233,7 +249,7 @@ public class OAuth2Module: AuthzModule {
     }
     
     /**
-    Request to revoke access
+    Request to revoke access.
 
     :param: completionHandler A block object to be executed when the request operation finishes.
     */
@@ -256,9 +272,9 @@ public class OAuth2Module: AuthzModule {
     }
 
     /**
-    Return any authorization fields
+    Return any authorization fields.
 
-    :returns:  a dictionary filled with the authorization fields
+    :returns:  a dictionary filled with the authorization fields.
     */
     public func authorizationFields() -> [String: String]? {
         if (self.oauth2Session.accessToken == nil) {
@@ -269,9 +285,9 @@ public class OAuth2Module: AuthzModule {
     }
 
     /**
-    Returns a boolean indicating whether authorization has been granted
+    Returns a boolean indicating whether authorization has been granted.
 
-    :returns: true if authorized, false otherwise
+    :returns: true if authorized, false otherwise.
     */
     public func isAuthorized() -> Bool {
         return self.oauth2Session.accessToken != nil && self.oauth2Session.tokenIsNotExpired()
@@ -280,7 +296,7 @@ public class OAuth2Module: AuthzModule {
     // MARK: Internal Methods
 
     func extractCode(notification: NSNotification, completionHandler: (AnyObject?, NSError?) -> Void) {
-        let url: NSURL? = (notification.userInfo as [String: AnyObject])[UIApplicationLaunchOptionsURLKey] as? NSURL
+        let url: NSURL? = (notification.userInfo as! [String: AnyObject])[UIApplicationLaunchOptionsURLKey] as? NSURL
 
         // extract the code from the URL
         let code = self.parametersFromQueryString(url?.query)["code"]
@@ -301,7 +317,7 @@ public class OAuth2Module: AuthzModule {
     func parametersFromQueryString(queryString: String?) -> [String: String] {
         var parameters = [String: String]()
         if (queryString != nil) {
-            var parameterScanner: NSScanner = NSScanner(string: queryString!)
+            let parameterScanner: NSScanner = NSScanner(string: queryString!)
             var name:NSString? = nil
             var value:NSString? = nil
 
